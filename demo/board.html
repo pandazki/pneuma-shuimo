@@ -106,9 +106,11 @@ addEventListener('resize', fit); fit();
 const json = async (path) => (await fetch(path)).json();
 const pieces = [];
 const byModel = new Set(); // 干净的模型只凭 skill 写的
-for (const path of await json('/pieces.json')) { const p = await json(path); if (validatePiece(p).ok) { pieces.push(p); if (!path.startsWith('/pieces/')) byModel.add(p.id); } }
+const fetched = async (list) => { const paths = await json(list); const got = await Promise.all(paths.map(json)); return paths.map((path, i) => [path, got[i]]); };
+const [pieceList, scriptList] = await Promise.all([fetched('/pieces.json'), fetched('/scripts.json')]);
+for (const [path, p] of pieceList) { if (validatePiece(p).ok) { pieces.push(p); if (!path.startsWith('/pieces/')) byModel.add(p.id); } }
 const scripts = [];
-for (const path of await json('/scripts.json')) { const s = await json(path); if (validate(s).ok) scripts.push(s); }
+for (const [, s] of scriptList) { if (validate(s).ok) scripts.push(s); }
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const any = (list) => list[Math.floor(Math.random() * list.length)];
 

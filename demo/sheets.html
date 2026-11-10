@@ -17,8 +17,9 @@
 import { mount, validate } from '../src/index.js';
 const list = document.getElementById('list');
 const paths = await (await fetch('/scripts.json')).json();
-for (const path of paths) {
-  const script = await (await fetch(path)).json();
+const got = await Promise.all(paths.map(async (path) => (await fetch(path)).json()));
+for (const [i, path] of paths.entries()) {
+  const script = got[i];
   const section = document.createElement('section');
   list.append(section);
   const result = validate(script);

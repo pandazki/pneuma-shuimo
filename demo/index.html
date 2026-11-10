@@ -79,10 +79,13 @@ const any = (list) => list[Math.floor(Math.random() * list.length)];
 const json = async (path) => (await fetch(path)).json();
 
 // ── 它会的：小品，和主人说过的话 ──
+// 两份清单和里面的每一份都同时去取；一份份排队取，线上要多等五秒。
+const all = async (list) => Promise.all((await json(list)).map(json));
+const [pieceList, scriptList] = await Promise.all([all('/pieces.json'), all('/scripts.json')]);
 const pieces = {};
-for (const path of await json('/pieces.json')) { const p = await json(path); if (validatePiece(p).ok) pieces[p.id] = p; }
+for (const p of pieceList) if (validatePiece(p).ok) pieces[p.id] = p;
 const scripts = {};
-for (const path of await json('/scripts.json')) { const s = await json(path); if (validate(s).ok) scripts[s.id] = s; }
+for (const s of scriptList) if (validate(s).ok) scripts[s.id] = s;
 const hoverPieces = Object.values(pieces).filter((p) => p.occasion === 'hover' && p.id !== 'roll-about');
 
 const WORDS = [

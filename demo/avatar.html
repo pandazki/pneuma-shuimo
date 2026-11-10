@@ -23,7 +23,8 @@
 import { summon, validatePiece } from '../src/index.js';
 const paths = await (await fetch('/pieces.json')).json();
 const pieces = [];
-for (const path of paths) { const p = await (await fetch(path)).json(); if (validatePiece(p).ok) pieces.push(p); else console.warn('被拒', path, validatePiece(p).errors); }
+const got = await Promise.all(paths.map(async (path) => (await fetch(path)).json()));
+for (const [i, path] of paths.entries()) { const p = got[i]; if (validatePiece(p).ok) pieces.push(p); else console.warn('被拒', path, validatePiece(p).errors); }
 const stage = document.getElementById('stage');
 let spirit;
 const make = () => { spirit?.destroy(); spirit = summon(stage, { size: 72, pieces, idle: { first: [9000, 14000], between: [12000, 20000] } }); };
