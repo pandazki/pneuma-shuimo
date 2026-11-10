@@ -1,0 +1,7 @@
+// 演示站点：node tools/build.mjs && npx wrangler deploy
+{
+  "name": "pneuma-shuimo",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "shuimo.vibecoding.icu", "custom_domain": true }]
+}
