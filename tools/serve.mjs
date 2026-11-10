@@ -13,12 +13,12 @@ createServer(async (req, res) => {
     if (path === '/') { res.writeHead(302, { location: '/demo/' }); res.end(); return; }
     if (path === '/scripts.json') {
       const list = [];
-      for (const dir of ['examples', 'trials', 'trials2']) for (const f of (await readdir(join(root, dir)).catch(() => [])).filter((n) => n.endsWith('.json')).sort()) list.push(`/${dir}/${f}`);
+      for (const dir of ['examples', 'trials/sheets']) for (const f of (await readdir(join(root, dir)).catch(() => [])).filter((n) => n.endsWith('.json')).sort()) list.push(`/${dir}/${f}`);
       res.writeHead(200, { 'content-type': TYPES['.json'], 'cache-control': 'no-store' }); res.end(JSON.stringify(list)); return;
     }
     if (path === '/pieces.json') {
       const list = [];
-      for (const dir of ['pieces', 'trials-pieces']) for (const f of (await readdir(join(root, dir)).catch(() => [])).filter((n) => n.endsWith('.json')).sort()) list.push(`/${dir}/${f}`);
+      for (const dir of ['pieces', 'trials/pieces']) for (const f of (await readdir(join(root, dir)).catch(() => [])).filter((n) => n.endsWith('.json')).sort()) list.push(`/${dir}/${f}`);
       res.writeHead(200, { 'content-type': TYPES['.json'], 'cache-control': 'no-store' }); res.end(JSON.stringify(list)); return;
     }
     if (path.endsWith('/')) path += 'index.html';

@@ -1,7 +1,23 @@
 {
   "name": "pneuma-shuimo",
   "version": "0.1.0",
-  "description": "墨：一张空白的纸，一个活的墨圆。Agent 写一份 JSON，圆用毛笔把它写出来：自己的小品，或者一样能用的东西。播放器、脚本格式、校验、质检工具和教 Agent 写的 skill。",
+  "description": "墨：一张空白的纸，一个活的墨圆。Agent 写一份 JSON，圆用毛笔把它写出来。播放器、脚本格式、校验、质检工具和教 Agent 写的 skill。",
+  "homepage": "https://shuimo.vibecoding.icu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pandazki/pneuma-shuimo.git"
+  },
+  "bugs": "https://github.com/pandazki/pneuma-shuimo/issues",
+  "license": "MIT",
+  "keywords": [
+    "ink",
+    "brush",
+    "shuimo",
+    "agent",
+    "generative-ui",
+    "canvas",
+    "avatar"
+  ],
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -29,18 +45,9 @@
     "check": "node tools/check.mjs examples/*.json",
     "film": "node tools/film.mjs pieces/*.json --out shots",
     "shoot": "node tools/shoot.mjs examples/*.json --out shots",
-    "test": "node --test tests/"
+    "test": "node --test tests/",
+    "build": "node tools/build.mjs"
   },
-  "license": "MIT",
-  "keywords": [
-    "ink",
-    "brush",
-    "shuimo",
-    "agent",
-    "generative-ui",
-    "canvas",
-    "avatar"
-  ],
   "engines": {
     "node": ">=22"
   }

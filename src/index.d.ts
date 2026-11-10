@@ -1,5 +1,5 @@
 /** 脚本，format 1。Agent 写的就是这个；见 skill/SKILL.md。 */
-export interface InkDaoScript {
+export interface ShuimoScript {
   format?: 1;
   /** 小写短横线命名，最多 40 字符。 */
   id: string;
@@ -40,8 +40,8 @@ export type Verdict = { ok: true; errors: []; warnings: string[]; plan: Plan } |
 
 /** 每份脚本上纸之前都要过的关。错误逐条说明在哪里、怎么改。没有 DOM，前后端同一份。 */
 export function validate(script: unknown): Verdict;
-export function initialState(script: InkDaoScript): SheetState;
-export function compose(script: InkDaoScript): Plan;
+export function initialState(script: ShuimoScript): SheetState;
+export function compose(script: ShuimoScript): Plan;
 export function describe(plan: Plan): string;
 
 export interface MountOptions {
@@ -73,7 +73,7 @@ export interface Sheet {
   destroy(): void;
 }
 /** 把一份通过校验的脚本放到容器里。脚本没通过会抛错，错里带着全部理由。 */
-export function mount(container: HTMLElement, script: InkDaoScript, options?: MountOptions): Sheet;
+export function mount(container: HTMLElement, script: ShuimoScript, options?: MountOptions): Sheet;
 
 export const MOTIF_NAMES: MotifName[];
 export const MOTIFS: Record<MotifName, { name: string; strokes: Stroke[] }>;
