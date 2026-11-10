@@ -291,6 +291,17 @@ export function summon(container, options = {}) {
     set,
     play: (piece, occasion, over) => play(piece, occasion, now(), over),
     look, unlook: () => dryEye(), done,
+    /**
+     * One more stroke of its own, for whoever is directing it (a ceremony the app has made for it): written `after`
+     * ms from now over `dur` ms, and staying until the handle's dry() is called, or drying by itself after `stays` ms.
+     */
+    ink(def, { after = 0, dur = 400, stays } = {}) {
+      const at = now() + after;
+      const ink = put(def, at, reduced ? 0 : dur, 'own');
+      if (stays !== undefined) dry(ink, at + dur + stays, 600);
+      wake();
+      return { dry: (over = 400) => { dry(ink, now(), over); wake(); } };
+    },
     /** Its circle dries where it is (it is leaving, or being carried off); rewrite() writes it again where it now is. */
     dryAway(dur = 500) { giveWay(); dryEye(); dry(circle, now(), dur); wake(); },
     rewrite(dur = 620) { rewriteCircle(now(), dur); },

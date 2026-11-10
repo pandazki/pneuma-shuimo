@@ -8,46 +8,51 @@
 <style>
   :root { --paper: #f4efe4; --ink: #1f1d1a; --faint: #8d877b; --line: #ddd5c4; --cinnabar: #b5352b; }
   html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); overflow: hidden; font-family: 'TsangerJinKai02', 'Kaiti SC', 'STKaiti', 'KaiTi', serif; -webkit-font-smoothing: antialiased; user-select: none; }
-  /* 一张纸：固定的 1000 × 620，整张放大到一屏。 */
-  #stage { position: absolute; left: 50%; top: 50%; width: 880px; height: 550px; transform-origin: 0 0; }
+  /* 一张纸：660 × 412，整张放大到一屏（一般是两倍）。纸上的东西少而大。 */
+  #stage { position: absolute; left: 50%; top: 50%; width: 660px; height: 412px; transform-origin: 0 0; }
   #trail { position: absolute; left: 0; top: 0; pointer-events: none; }
   .at { position: absolute; }
   #me { position: absolute; cursor: grab; touch-action: none; z-index: 5; }
   #me.held { cursor: grabbing; }
   #sheet { position: absolute; z-index: 4; }
 
-  /* 它说的话：一个字一个字写出来。 */
-  #say { left: 56px; bottom: 40px; font-size: 21px; letter-spacing: 0.06em; height: 30px; white-space: nowrap; }
-  #say span { opacity: 0; filter: blur(2px); transition: opacity 260ms ease-out, filter 340ms ease-out; }
+  /* 它说的话：大字，一个字一个字写出来。 */
+  #say { left: 44px; bottom: 44px; font-size: 19px; letter-spacing: 0.1em; height: 26px; white-space: nowrap; }
+  #say span { opacity: 0; filter: blur(1.4px); transition: opacity 260ms ease-out, filter 340ms ease-out; }
   #say span.w { opacity: 1; filter: none; }
   #say.dry span { opacity: 0; transition: opacity 380ms ease-in; }
-  #hint { left: 56px; bottom: 18px; font-size: 13px; color: var(--faint); letter-spacing: 0.08em; transition: opacity 500ms; }
+  #hint { left: 45px; bottom: 26px; font-size: 8.5px; color: var(--faint); letter-spacing: 0.14em; transition: opacity 500ms; }
 
-  /* 主人的话：可以把它放上去，也可以直接点。 */
-  #words { right: 44px; top: 92px; width: 250px; opacity: 0; transition: opacity 1200ms; }
+  /* 主人的话：竖排，从右往左，像题在画边的字。可以把它放上去，也可以直接点。 */
+  #words { right: 40px; top: 58px; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 0; opacity: 0; transition: opacity 900ms; }
   #words.on { opacity: 1; }
-  #words h2 { margin: 0 0 6px; font-size: 12.5px; font-weight: 400; color: var(--faint); letter-spacing: 0.3em; }
-  #words h2:not(:first-child) { margin-top: 22px; }
-  .word { all: unset; display: block; box-sizing: border-box; width: 100%; cursor: pointer; white-space: nowrap; font-size: 15.5px; line-height: 1; padding: 9px 0 9px 14px; position: relative; color: #55514a; transition: color 250ms; }
-  .word::before { content: ''; position: absolute; left: 0; top: 50%; width: 5px; height: 5px; margin-top: -2px; border-radius: 50%; background: currentColor; opacity: 0.3; transition: opacity 250ms, background 250ms; }
-  .word:hover, .word.over { color: var(--ink); }
-  .word.over::before, .word.now::before { opacity: 1; background: var(--cinnabar); }
-  .word.now { color: var(--ink); }
-  .word small { color: var(--cinnabar); font-size: 10.5px; margin-left: 6px; opacity: 0.8; }
+  #words.away { opacity: 0; pointer-events: none; }
+  #words h2 { writing-mode: vertical-rl; margin: 0 2px 0 9px; font-size: 6.5px; font-weight: 400; color: var(--faint); letter-spacing: 0.5em; padding-top: 2px; }
+  #words h2:not(:first-child) { margin-right: 16px; }
+  .word { all: unset; box-sizing: border-box; cursor: pointer; writing-mode: vertical-rl; font-size: 10.5px; letter-spacing: 0.16em; line-height: 1; padding: 0 5.5px 12px; position: relative; color: #6a655c; transition: color 250ms; white-space: nowrap; }
+  .word::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: transparent; transition: background 250ms; }
+  .word.model::after { background: color-mix(in srgb, var(--cinnabar) 45%, transparent); }
+  .word:hover, .word.over, .word.now { color: var(--ink); }
+  .word.over::after, .word.now::after { background: var(--cinnabar); }
 
-  h1 { margin: 0; font-size: 26px; font-weight: 400; }
-  .faint { color: var(--faint); font-size: 12.5px; letter-spacing: 0.1em; }
-  a, .link { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; cursor: pointer; }
-  #json { right: 44px; bottom: 40px; width: 250px; max-height: 250px; overflow: auto; margin: 0; padding: 10px 12px; box-sizing: border-box; background: rgba(255, 253, 247, 0.92); border: 1px solid var(--line); font: 9.5px/1.55 ui-monospace, 'SF Mono', Menlo, monospace; color: #4a463f; white-space: pre-wrap; word-break: break-all; display: none; z-index: 8; user-select: text; }
+  /* 题：一个「墨」字。把它放上来，它会围着这个字合成一个圈。 */
+  h1 { margin: 0; width: 22px; height: 22px; font-size: 20px; line-height: 22px; text-align: center; font-weight: 400; transition: opacity 500ms ease, filter 700ms ease; }
+  h1.calls { opacity: 0.45; }
+  h1.pale { opacity: 0.14; filter: blur(1.2px); }
+  #sub { transition: left 900ms cubic-bezier(.2,.7,.2,1); }
+  .faint { color: var(--faint); font-size: 6.5px; letter-spacing: 0.16em; }
+  a, .link { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; cursor: pointer; }
+  #json { left: 44px; top: 70px; width: 250px; max-height: 250px; overflow: auto; margin: 0; padding: 8px 10px; box-sizing: border-box; background: rgba(255, 253, 247, 0.95); border: 0.5px solid var(--line); font: 5px/1.6 ui-monospace, 'SF Mono', Menlo, monospace; color: #4a463f; white-space: pre-wrap; word-break: break-all; display: none; z-index: 8; user-select: text; }
   #json.on { display: block; }
 </style>
 </head>
 <body>
 <div id="stage">
   <canvas id="trail"></canvas>
-  <h1 class="at" style="left:56px;top:30px">墨</h1>
-  <div class="at faint" style="left:96px;top:41px">pneuma-shuimo</div>
-  <div class="at faint" style="right:44px;top:41px"><a href="board.html">全部案例</a>　<span class="link" id="showJson">看它写的脚本</span></div>
+  <h1 class="at" id="logo" style="left:44px;top:26px">墨</h1>
+  <div class="at faint" id="sub" style="left:74px;top:39px">pneuma-shuimo</div>
+  <div class="at faint" style="right:40px;top:36px"><a href="board.html">全部案例</a>　<span class="link" id="showJson">看它写的脚本</span></div>
+  <div class="at faint" style="right:40px;bottom:26px" id="legend">朱点：这一句的脚本是模型只凭 skill 写的</div>
 
   <div id="sheet"></div>
   <div id="me"></div>
@@ -63,9 +68,9 @@ import { summon, mount, validate, validatePiece, Paper, DENSITY, lay } from '../
 
 // ── 纸 ──
 const stage = document.getElementById('stage');
-const W = 880, H = 550, SIZE = 56;
+const W = 660, H = 412, SIZE = 56;
 let S = Math.min(innerWidth / W, innerHeight / H);
-DENSITY.boost = Math.min(2.2, S);           // 放大了看，墨也要按放大后的像素来画
+DENSITY.boost = Math.min(3, S);           // 放大了看，墨也要按放大后的像素来画
 const fit = () => { S = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = `scale(${S}) translate(-50%, -50%)`; };
 addEventListener('resize', fit); fit();
 const local = (e) => { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / S, y: (e.clientY - r.top) / S }; };
@@ -95,8 +100,8 @@ const WORDS = [
 
 // ── 主角 ──
 const me = document.getElementById('me');
-const HOME = { x: 270, y: 215 };     // 纸的中间偏左
-const DESK = { x: 70, y: 124 };      // 它写东西的地方：右边和下边留得出一张纸
+const HOME = { x: 196, y: 148 };     // 纸的中间偏左
+const DESK = { x: 42, y: 78 };      // 它写东西的地方：右边和下边留得出一张纸
 let pos = { ...HOME };
 const place = () => { me.style.left = `${pos.x}px`; me.style.top = `${pos.y}px`; };
 place();
@@ -120,7 +125,7 @@ const tick = (now) => {
   if (marks.size) frame = requestAnimationFrame(tick);
 };
 /** 它自己去别处：圆在原处干去，一笔扫过去，在那里重新写出来。它从不滑过去。 */
-async function travel(to) {
+async function travel(to, arrive = 560) {
   const a = { x: pos.x + SIZE / 2, y: pos.y + SIZE / 2 }, b = { x: to.x + SIZE / 2, y: to.y + SIZE / 2 };
   const far = Math.hypot(b.x - a.x, b.y - a.y);
   if (far < 12) return;
@@ -128,7 +133,7 @@ async function travel(to) {
   const bow = Math.min(60, far * 0.16) * (b.x > a.x ? -1 : 1);
   const from = [a.x + ux * 22, a.y + uy * 22], end = [b.x - ux * 20, b.y - uy * 20];
   const mid = [(a.x + b.x) / 2 - uy * bow, (a.y + b.y) / 2 + ux * bow];
-  const dur = Math.min(900, 380 + far * 0.9);
+  const dur = Math.min(900, 380 + far * 1.3);
   const now = performance.now();
   // 离开时还按着，中间提起来写干，快到时再按下去。
   const def = { path: [from, [(from[0] + mid[0]) / 2 - uy * bow * 0.4, (from[1] + mid[1]) / 2 + ux * bow * 0.4], mid, [(mid[0] + end[0]) / 2 - uy * bow * 0.4, (mid[1] + end[1]) / 2 + ux * bow * 0.4], end], width: 7.5, press: [[0, 0.75], [0.12, 1], [0.5, 0.3], [0.86, 0.5], [1, 0.9]], ink: 0.92, wet: 0.22, dry: 0.95, liberty: 'sweep' };
@@ -137,8 +142,8 @@ async function travel(to) {
   spirit.dryAway(420);
   await wait(dur * 0.8);
   pos = { ...to }; place();
-  spirit.rewrite(560);
-  await wait(620);
+  spirit.rewrite(arrive);
+  await wait(arrive + 60);
 }
 
 // ── 它说话 ──
@@ -160,6 +165,8 @@ async function say(text, hint = '') {
 
 // ── 它听懂的话 ──
 const wordsEl = document.getElementById('words');
+const legend = document.getElementById('legend');
+legend.style.transition = 'opacity 600ms';
 const jsonEl = document.getElementById('json');
 const showScript = (obj) => { jsonEl.textContent = obj ? JSON.stringify(obj, null, 1).replace(/\[\s+(-?[\d.]+),\s+(-?[\d.]+)\s+\]/g, '[$1, $2]') : '它还没写什么。'; };
 showScript(null);
@@ -167,11 +174,42 @@ document.getElementById('showJson').onclick = () => jsonEl.classList.toggle('on'
 for (const w of WORDS) {
   if (w.head) { const h = document.createElement('h2'); h.textContent = w.head; wordsEl.append(h); continue; }
   const b = document.createElement('button');
-  b.className = 'word'; b.type = 'button';
-  b.innerHTML = `「${w.say}」${w.model ? '<small>模型写的</small>' : ''}`;
+  b.className = `word${w.model ? ' model' : ''}`; b.type = 'button';
+  b.textContent = `「${w.say}」`;
   b.onclick = () => { touched(); hear(w); };
   w.el = b;
   wordsEl.append(b);
+}
+
+// ── 合：把它放到左上角的「墨」字上，它围着这个字写成一个整圈，和题合为一体 ──
+const logo = document.getElementById('logo'), sub = document.getElementById('sub');
+const LOGO = { x: 44 + 11 - SIZE / 2, y: 26 + 11 - SIZE / 2 };      // 它的圆心正落在字心上
+const nearLogo = (x, y) => Math.hypot(x - LOGO.x, y - LOGO.y) < 34;
+let merged = null;    // 合着的时候：{ seal, turn }
+async function merge() {
+  const my = ++turn;
+  spirit.set('still');
+  await fold(true);
+  logo.classList.remove('calls');
+  logo.classList.add('pale');                       // 字先淡下去，把地方让出来
+  sub.style.left = '92px';
+  say('合。');
+  await travel(LOGO, 1500);                          // 一笔过去，围着字慢慢写一整圈
+  if (my !== turn) { logo.classList.remove('pale'); return; }
+  logo.classList.remove('pale');                     // 圈写成了，字的墨回来
+  spirit.ink({ path: [[49, 50], [51.5, 50.6]], width: 58, press: 'dot', ink: 0.13, wet: 1, dry: 0, liberty: 'still' }, { dur: 500, stays: 900 });   // 圈里晕开一层淡墨
+  const rim = [-80, -68, -52, -36, -24].map((d) => [50 + 33 * Math.cos((d * Math.PI) / 180), 50 + 33 * Math.sin((d * Math.PI) / 180)]);
+  const seal = spirit.ink({ path: rim, width: 10, press: 'plain', ink: 0.95, wet: 0.5, dry: 0.35, liberty: 'calm' }, { after: 520, dur: 460 });   // 最后一笔，把口合上
+  merged = { seal };
+  await wait(1100);
+  if (my === turn) say('我就是墨。', '按住这个圈，可以再把我带出来。');
+}
+function unmerge() {
+  if (!merged) return;
+  merged.seal.dry(350); merged = null;
+  logo.classList.remove('pale');
+  sub.style.left = '74px';
+  spirit.set('rest');
 }
 
 let sheet = null;     // 它写出来、还在纸上的那一样
@@ -184,6 +222,7 @@ async function fold(quiet = false) {
   if (!sheet) return;
   const s = sheet; sheet = null;
   s.fold();
+  wordsEl.classList.remove('away'); legend.style.opacity = 1;
   spirit.rewrite(600);
   mark(null);
   if (!quiet) say('从圆里来，回圆里去。');
@@ -196,6 +235,7 @@ async function hear(w) {
   const my = ++turn;
   const alive = () => my === turn;
   done.word = true;
+  unmerge();
   spirit.set('rest'); spirit.giveWay();
   await fold(true);
   if (!alive()) return;
@@ -228,6 +268,7 @@ async function hear(w) {
   showScript(script);
   const el = document.getElementById('sheet');
   el.style.left = `${pos.x + SIZE / 2 - 30}px`; el.style.top = `${pos.y + SIZE / 2 - 34}px`;
+  wordsEl.classList.add('away'); legend.style.opacity = 0;
   sheet = mount(el, script, { circle: false, onState: () => { if (!done.use) { done.use = true; say('它是真的。', '用完了，点一下我，它就收回去。'); } }, onKeep: (k) => say(k ? '钤了印，它就留下了。' : '印取掉了。') });
   await wait(sheet.plan.usable + 300); if (!alive()) return;
   say('写出来了。', done.use ? '点一下我，它就收回去。' : '它是真的：点一点试试。');
@@ -235,7 +276,7 @@ async function hear(w) {
 
 // ── 拖：带着走只是位置跟手，形不变；放到一句话上，就是对它说了这句话 ──
 let held = null;
-const wordAt = (x, y) => WORDS.find((w) => { if (!w.el) return false; const r = w.el.getBoundingClientRect(), s = stage.getBoundingClientRect(); const l = (r.left - s.left) / S, t = (r.top - s.top) / S; return x > l - 30 && x < l + r.width / S && y > t - 6 && y < t + r.height / S + 6; });
+const wordAt = (x, y) => WORDS.find((w) => { if (!w.el) return false; const r = w.el.getBoundingClientRect(), s = stage.getBoundingClientRect(); const l = (r.left - s.left) / S, t = (r.top - s.top) / S; return x > l - 3 && x < l + r.width / S + 3 && y > t - 30 && y < t + r.height / S + 10; });
 me.addEventListener('pointerdown', (e) => {
   touched();
   const p = local(e);
@@ -247,12 +288,13 @@ me.addEventListener('pointermove', (e) => {
   const p = local(e);
   if (!held.moved && Math.hypot(p.x - held.x0, p.y - held.y0) > 4) {
     held.moved = true; me.classList.add('held');
-    turn += 1; spirit.set('rest'); fold(true);
-    if (!done.carry) say('带我去哪？', '放到右边的一句话上；或者随便放个地方。');
+    const was = merged;
+    turn += 1; unmerge(); spirit.set('rest'); fold(true);
+    if (was) say('出来了。'); else if (!done.carry) say('带我去哪？', '放到右边的一句话上；或者随便放个地方。');
     follow();
   }
-  held.tx = Math.max(8, Math.min(W - SIZE - 8, p.x - held.dx)); held.ty = Math.max(8, Math.min(H - SIZE - 8, p.y - held.dy));
-  if (held.moved) { const w = wordAt(held.tx + SIZE / 2, held.ty + SIZE / 2); WORDS.forEach((x) => x.el?.classList.toggle('over', x === w)); }
+  held.tx = Math.max(4, Math.min(W - SIZE - 4, p.x - held.dx)); held.ty = Math.max(4, Math.min(H - SIZE - 4, p.y - held.dy));
+  if (held.moved) { const w = wordAt(held.tx + SIZE / 2, held.ty + SIZE / 2); WORDS.forEach((x) => x.el?.classList.toggle('over', x === w)); logo.classList.toggle('calls', nearLogo(held.tx, held.ty)); }
 });
 const follow = () => { if (!held) return; pos.x += (held.tx - pos.x) * 0.32; pos.y += (held.ty - pos.y) * 0.32; place(); requestAnimationFrame(follow); };
 me.addEventListener('pointerup', async () => {
@@ -265,20 +307,21 @@ me.addEventListener('pointerup', async () => {
   }
   pos.x = h.tx; pos.y = h.ty; place();
   done.carry = true;
+  if (nearLogo(pos.x, pos.y)) { merge(); return; }
   const w = wordAt(pos.x + SIZE / 2, pos.y + SIZE / 2);
   if (w) { hear(w); return; }
-  say('好，我就待在这儿。', '你带我走，只是挪位置；我自己走的时候，是一笔过去。');
+  say('好，我就待在这儿。', '左上角那个「墨」字，也可以把我放上去。');
 });
 
 // ── 它看得见指针：指针在附近，它点一个睛看过去 ──
 let eye = { on: false, angle: 0, at: 0 };
 stage.addEventListener('pointermove', (e) => {
-  if (held || spirit.busy || spirit.state !== 'rest') return;
+  if (held || merged || spirit.busy || spirit.state !== 'rest') return;
   const p = local(e);
   const dx = p.x - (pos.x + SIZE / 2), dy = p.y - (pos.y + SIZE / 2), far = Math.hypot(dx, dy);
   const now = performance.now();
   if (far < SIZE * 0.6) { eye.on = false; return; }      // 在它身上：它自己会看（summon 自带）
-  if (far > 210) { if (eye.on) { spirit.unlook(); eye.on = false; } return; }
+  if (far > 150) { if (eye.on) { spirit.unlook(); eye.on = false; } return; }
   const angle = Math.atan2(dy, dx);
   const turned = Math.abs(Math.atan2(Math.sin(angle - eye.angle), Math.cos(angle - eye.angle)));
   if (!eye.on || (turned > 0.75 && now - eye.at > 650)) { spirit.look(dx, dy); eye = { on: true, angle, at: now }; }
@@ -301,7 +344,7 @@ async function life() {
   for (;;) {
     await wait(1000);
     const quiet = performance.now() - last;
-    if (held || spirit.busy || document.hidden) continue;
+    if (held || merged || spirit.busy || document.hidden || spirit.state === 'still') continue;
     if (self && quiet > 6500 && spirit.state === 'rest' && !sheet) {
       // 没人来：它自己挑一句话做给你看，做完收回去。
       const w = demoWords[demoAt++ % demoWords.length];

@@ -2,18 +2,19 @@
   "format": 1,
   "id": "fish-leap",
   "name": "鱼跃",
-  "idea": "圆是一口池。一尾鱼从缺口一甩跃出来，在半空停一下就不见了；池里漾开两道水纹，溅出两点水。",
+  "idea": "圆是一口池。一尾鱼从缺口一甩跃出来，头朝上，尾巴还带着水；在半空停一下就不见了，池里漾开两道水纹。",
   "occasion": "hover",
   "circle": "keep",
   "strokes": [
-    { "path": [[74, 30], [88, 12], [104, -2], [118, -6]], "width": 7.5, "press": [[0, 0.3], [0.35, 1], [0.8, 0.7], [1, 0.25]], "ink": 0.95, "wet": 0.55, "dry": 0.3, "tint": 0.4, "pace": 0.5, "liberty": "quick", "fleeting": 900 },
-    { "path": [[118, -6], [128, -16]], "width": 4, "press": "fade", "ink": 0.9, "wet": 0.4, "dry": 0.5, "pace": 0.4, "pause": 0, "liberty": "quick", "fleeting": 800 },
-    { "path": [[118, -6], [131, -3]], "width": 4, "press": "fade", "ink": 0.9, "wet": 0.4, "dry": 0.5, "pace": 0.4, "pause": 0, "liberty": "quick", "fleeting": 760 },
-    { "path": [[92, 4.6], [94.4, 6]], "width": 3.6, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.4, "pause": 60, "liberty": "still", "fleeting": 620 },
-    { "path": [[62, 20], [63.6, 17.6]], "width": 4.4, "press": "dot", "ink": 0.5, "wet": 0.8, "dry": 0, "pace": 0.4, "pause": 200, "liberty": "quick", "fleeting": 500 },
-    { "path": [[84, 44], [86.4, 42.6]], "width": 3.6, "press": "dot", "ink": 0.4, "wet": 0.8, "dry": 0, "pace": 0.4, "pause": 60, "liberty": "quick", "fleeting": 460 },
-    { "path": [[38, 48], [48, 44.6], [58, 45], [66, 48.4]], "width": 3.4, "press": "taper", "ink": 0.6, "wet": 0.4, "dry": 0.5, "pace": 0.7, "pause": 500, "liberty": "calm" },
-    { "path": [[34, 60], [46, 56], [58, 56.4], [68, 60]], "width": 2.6, "press": "taper", "ink": 0.34, "wet": 0.4, "dry": 0.6, "pace": 0.8, "pause": 400, "liberty": "calm" }
+    { "path": [[72, 30], [80, 15], [92, 3], [107, -5]], "width": 13, "press": [[0, 0.22], [0.3, 0.8], [0.7, 1], [1, 0.6]], "ink": 0.6, "wet": 0.7, "dry": 0.15, "tint": 0.6, "pace": 0.45, "liberty": "quick", "fleeting": 1100 },
+    { "path": [[73, 29], [64, 27]], "width": 6, "press": "fade", "ink": 0.8, "wet": 0.4, "dry": 0.5, "pace": 0.35, "pause": 0, "liberty": "quick", "fleeting": 1000 },
+    { "path": [[73, 29], [71, 39]], "width": 6, "press": "fade", "ink": 0.8, "wet": 0.4, "dry": 0.5, "pace": 0.35, "pause": 0, "liberty": "quick", "fleeting": 950 },
+    { "path": [[89, 1], [84, -7]], "width": 4, "press": "fade", "ink": 0.85, "wet": 0.4, "dry": 0.4, "pace": 0.3, "pause": 0, "liberty": "quick", "fleeting": 850 },
+    { "path": [[102.6, -5.6], [104.6, -4.6]], "width": 4.6, "press": "dot", "ink": 1, "wet": 0.6, "dry": 0, "pace": 0.3, "pause": 0, "liberty": "still", "fleeting": 800 },
+    { "path": [[60, 18], [61, 15]], "width": 4.2, "press": "dot", "ink": 0.5, "wet": 0.8, "dry": 0, "pace": 0.3, "pause": 150, "liberty": "quick", "fleeting": 450 },
+    { "path": [[86, 34], [88.4, 32.6]], "width": 3.4, "press": "dot", "ink": 0.4, "wet": 0.8, "dry": 0, "pace": 0.3, "pause": 40, "liberty": "quick", "fleeting": 420 },
+    { "path": [[40, 50], [47, 45], [56, 43.5], [65, 46], [71, 51]], "width": 3, "press": "taper", "ink": 0.6, "wet": 0.4, "dry": 0.5, "pace": 0.6, "pause": 1000, "liberty": "calm" },
+    { "path": [[33, 63], [43, 56], [56, 53.5], [69, 57], [78, 64]], "width": 2.4, "press": "taper", "ink": 0.32, "wet": 0.4, "dry": 0.6, "pace": 0.7, "pause": 250, "liberty": "calm" }
   ],
-  "hold": 500
+  "hold": 450
 }

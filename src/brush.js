@@ -233,14 +233,16 @@ export class Painter {
       const d = L.dry * (0.18 + 0.82 * smooth(0.08 + 0.3 * L.wet, 1, s));
       const [x, y] = L.pts[k];
       // The body of ink under the hairs: plenty while the brush is loaded, gone as it runs dry.
-      const body = L.half[k] * (0.22 + 0.7 * L.wet) * (1 - d * 1.7);
+      // A dot (a stroke shorter than it is wide) is the whole brush pressed down: round, with no hairs showing.
+      const blob = L.total < L.width * 1.1;
+      const body = blob ? L.half[k] * 0.96 : L.half[k] * (0.22 + 0.7 * L.wet) * (1 - d * 1.7);
       if (body > 0.2 && k > this.k) {
         const ctx = ctxs[L.wet > 0.72 ? 2 : 4];
         ctx.beginPath();
         ctx.arc(x, y, body, 0, Math.PI * 2);
         ctx.fill();
       }
-      if (k === 0 || k <= this.k) continue;
+      if (blob || k === 0 || k <= this.k) continue;
       const [px, py] = L.pts[k - 1];
       for (const h of L.hairs) {
         if (L.cum[k] < h.start || L.cum[k] > h.end) continue;

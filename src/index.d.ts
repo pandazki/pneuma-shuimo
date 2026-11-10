@@ -128,13 +128,15 @@ export interface Spirit {
   readonly state: 'rest' | 'thinking' | 'working' | 'blank';
   readonly busy: boolean;
   /** rest 静；thinking 在想（圆一遍遍重写）；working 在做事（笔在圆里一段段地走）；blank 放空（墨淡成一道痕）。 */
-  set(state: 'rest' | 'thinking' | 'working' | 'blank'): void;
+  set(state: 'rest' | 'thinking' | 'working' | 'blank' | 'still'): void;
   /** 事情做完了：一笔合上口，停一拍干去，回到静。 */
   done(): void;
   /** 像有指针在那边一样看过去（相对圆心的像素）；unlook 让点干去。 */
   look(dx: number, dy: number): void;
   unlook(): void;
   /** 圆在原处干去（它要走了）；rewrite 在它现在的地方重新写出来。 */
+  /** 再写它自己的一笔（应用为它专门做的一段仪式）；返回的 dry() 让这一笔干去。 */
+  ink(def: PieceStroke, options?: { after?: number; dur?: number; stays?: number }): { dry(over?: number): void };
   dryAway(dur?: number): void;
   rewrite(dur?: number): void;
   play(piece: Piece, occasion?: 'leisure' | 'hover', over?: { hold?: number }): boolean;
