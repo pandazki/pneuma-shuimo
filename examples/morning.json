@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "id": "morning",
+  "title": "晨课",
+  "intent": "我想每天早上做三件事：拉伸、读二十分钟书、写三行日记。",
+  "rows": [
+    { "kind": "check", "key": "stretch", "label": "拉伸" },
+    { "kind": "check", "key": "read", "label": "读书二十分钟" },
+    { "kind": "check", "key": "journal", "label": "日记三行" }
+  ],
+  "ink": { "motif": "bamboo" },
+  "seal": "晨",
+  "resets": "daily"
+}

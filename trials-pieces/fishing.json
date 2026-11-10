@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "id": "fishing",
+  "name": "独钓",
+  "idea": "圆是一口池。池边坐着一个戴斗笠的钓翁，竿伸过池面，线从缺口垂下去，浮子点在水上；一尾鱼从深处慢慢浮上来碰了碰钩，浮子一沉又浮起。主人的指针一碰，鱼一甩尾逃走了，溅起两点水，水面乱了两圈，只剩一个空浮子。",
+  "occasion": "leisure",
+  "circle": "keep",
+  "strokes": [
+    { "path": [[24, 6], [21, 17]], "width": 16, "press": [[0, 0.4], [0.7, 1], [1, 1]], "ink": 0.5, "wet": 0.7, "dry": 0.1, "pace": 1, "liberty": "calm" },
+    { "path": [[10, 4], [23, 0], [36, 4]], "width": 10, "press": [[0, 0.2], [0.5, 1], [1, 0.2]], "ink": 0.92, "wet": 0.45, "dry": 0.3, "pace": 0.7, "pause": 300, "liberty": "still" },
+    { "path": [[29, 12], [41, 5], [54, -2], [68, -6]], "width": 2.6, "press": "hair", "ink": 0.85, "wet": 0.3, "dry": 0.4, "pace": 1.3, "pause": 1200, "liberty": "calm" },
+    { "path": [[68, -6], [67.5, 10], [67, 28], [66, 41]], "width": 1.6, "press": "hair", "ink": 0.55, "wet": 0.3, "dry": 0.3, "pace": 1.2, "pause": 600, "liberty": "calm" },
+    { "path": [[65, 43], [67.5, 43.6]], "width": 6, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.6, "pause": 900, "liberty": "still" },
+    { "path": [[59, 46.5], [66, 48.5], [73, 46.5]], "width": 2.6, "press": "taper", "ink": 0.4, "wet": 0.4, "dry": 0.5, "pace": 1, "pause": 300, "liberty": "calm" },
+
+    { "path": [[52, 63], [45, 66], [37, 68]], "width": 7, "press": [[0, 0.35], [0.3, 1], [0.8, 0.65], [1, 0.2]], "ink": 0.3, "wet": 0.85, "dry": 0.1, "pace": 1.3, "pause": 2500, "liberty": "free", "fleeting": 1600 },
+    { "path": [[37, 68], [31, 64]], "width": 3.6, "press": "fade", "ink": 0.3, "wet": 0.7, "dry": 0.3, "pace": 0.6, "pause": 0, "liberty": "free", "fleeting": 1500 },
+    { "path": [[37, 68], [30.5, 71]], "width": 3.6, "press": "fade", "ink": 0.3, "wet": 0.7, "dry": 0.3, "pace": 0.6, "pause": 0, "liberty": "free", "fleeting": 1450 },
+
+    { "path": [[61, 52], [52, 56.5], [42, 59.5]], "width": 8.5, "press": [[0, 0.35], [0.3, 1], [0.8, 0.65], [1, 0.2]], "ink": 0.45, "wet": 0.75, "dry": 0.15, "tint": 0.3, "pace": 1, "pause": 1400, "liberty": "free" },
+    { "path": [[42, 59.5], [35, 54.5]], "width": 4, "press": "fade", "ink": 0.45, "wet": 0.55, "dry": 0.4, "pace": 0.5, "pause": 0, "liberty": "free" },
+    { "path": [[42, 59.5], [34, 63.5]], "width": 4, "press": "fade", "ink": 0.45, "wet": 0.55, "dry": 0.4, "pace": 0.5, "pause": 0, "liberty": "free" },
+
+    { "circle": { "centre": [66, 44], "radius": 5.5, "gap": 50, "gapAt": -90 }, "width": 2, "press": "taper", "ink": 0.5, "wet": 0.4, "dry": 0.4, "pace": 0.5, "pause": 1800, "replaces": 4, "fleeting": 700, "liberty": "calm" },
+    { "path": [[65, 43], [67.5, 43.6]], "width": 6, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.6, "pause": 500, "liberty": "still" }
+  ],
+  "answer": [
+    { "path": [[47, 61], [38, 65], [28, 68]], "width": 6.5, "press": [[0, 0.3], [0.4, 1], [1, 0.12]], "ink": 0.5, "wet": 0.5, "dry": 0.4, "pace": 0.3, "replaces": 9, "fleeting": 280, "liberty": "quick" },
+    { "path": [[30, 56], [31.6, 54]], "width": 4.6, "press": "dot", "ink": 0.5, "wet": 0.8, "dry": 0, "pace": 0.4, "pause": 0, "replaces": 10, "fleeting": 450, "liberty": "quick" },
+    { "path": [[25, 49], [26.2, 47]], "width": 3.6, "press": "dot", "ink": 0.4, "wet": 0.8, "dry": 0, "pace": 0.4, "pause": 40, "replaces": 11, "fleeting": 400, "liberty": "quick" },
+    { "path": [[41, 61], [50, 57.5], [60, 61]], "width": 2.4, "press": "taper", "ink": 0.38, "wet": 0.4, "dry": 0.5, "pace": 0.6, "pause": 60, "fleeting": 900, "liberty": "calm" },
+    { "path": [[36, 67], [50, 62.5], [64, 67]], "width": 2, "press": "taper", "ink": 0.25, "wet": 0.4, "dry": 0.6, "pace": 0.7, "pause": 200, "fleeting": 800, "liberty": "calm" },
+    { "circle": { "centre": [66, 44], "radius": 5.5, "gap": 50, "gapAt": -90 }, "width": 2, "press": "taper", "ink": 0.5, "wet": 0.4, "dry": 0.4, "pace": 0.5, "pause": 100, "replaces": 13, "fleeting": 600, "liberty": "calm" },
+    { "path": [[65, 43], [67.5, 43.6]], "width": 6, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.6, "pause": 500, "liberty": "still" }
+  ],
+  "hold": 8000
+}

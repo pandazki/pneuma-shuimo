@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "reading",
+  "title": "待读",
+  "intent": "给我一个地方记想读的书，读完划掉。",
+  "rows": [
+    { "kind": "entry", "key": "books", "placeholder": "书名，回车添上", "max": 5 }
+  ],
+  "ink": { "motif": "orchid" },
+  "seal": "读"
+}

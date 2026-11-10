@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "packing",
+  "title": "行李",
+  "intent": "后天出差三天，帮我列一下要带的，我再自己添。",
+  "rows": [
+    { "kind": "entry", "key": "things", "placeholder": "还要带什么，回车添上", "max": 8, "items": ["身份证", "充电器", "换洗衣物", "洗漱包"] }
+  ],
+  "ink": { "motif": "mountain" },
+  "seal": "行"
+}

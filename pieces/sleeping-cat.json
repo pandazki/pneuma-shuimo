@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "sleeping-cat",
+  "name": "睡猫",
+  "idea": "圆是一只蜷着睡的猫：两只耳朵立在圆上，眼睛闭着，尾巴从圆下面伸出来，甩一下又放下。主人的指针碰到它，一只耳朵抖一下，睁开一只眼。",
+  "occasion": "leisure",
+  "circle": "keep",
+  "strokes": [
+    { "path": [[19, 36], [13, 14], [31, 22]], "width": 6.5, "press": "peak", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.5, "liberty": "still" },
+    { "path": [[40, 19], [47, 0], [58, 17]], "width": 6.5, "press": "peak", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.5, "pause": 350, "liberty": "still" },
+    { "path": [[33, 50], [39, 54], [45, 50]], "width": 3.6, "press": "taper", "ink": 0.95, "wet": 0.5, "dry": 0.2, "pace": 0.6, "pause": 1300, "liberty": "still" },
+    { "path": [[55, 48], [61, 52], [67, 48]], "width": 3.6, "press": "taper", "ink": 0.95, "wet": 0.5, "dry": 0.2, "pace": 0.6, "pause": 260, "liberty": "still" },
+    { "path": [[49, 59], [51.4, 60.4]], "width": 4.6, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.5, "pause": 800, "liberty": "still" },
+    { "path": [[43, 63], [34, 64], [25, 68]], "width": 1.8, "press": "hair", "ink": 0.6, "wet": 0.3, "dry": 0.4, "pace": 0.3, "pause": 900, "liberty": "quick" },
+    { "path": [[58, 63], [67, 63], [76, 66]], "width": 1.8, "press": "hair", "ink": 0.6, "wet": 0.3, "dry": 0.4, "pace": 0.3, "pause": 140, "liberty": "quick" },
+    { "path": [[76, 80], [90, 84], [102, 80], [106, 72]], "width": 6, "press": [[0, 0.9], [0.6, 0.8], [1, 0.25]], "ink": 0.5, "wet": 0.6, "dry": 0.4, "pace": 0.8, "pause": 1500, "liberty": "free" },
+    { "path": [[76, 80], [92, 78], [102, 66], [100, 52]], "width": 6, "press": [[0, 0.9], [0.6, 0.8], [1, 0.25]], "ink": 0.5, "wet": 0.6, "dry": 0.4, "pace": 0.35, "pause": 2600, "replaces": 7, "fleeting": 500, "liberty": "quick" },
+    { "path": [[76, 80], [90, 84], [102, 80], [106, 72]], "width": 6, "press": [[0, 0.9], [0.6, 0.8], [1, 0.25]], "ink": 0.5, "wet": 0.6, "dry": 0.4, "pace": 0.5, "pause": 420, "liberty": "free" }
+  ],
+  "answer": [
+    { "path": [[42, 18], [54, -1], [61, 17]], "width": 6.5, "press": "peak", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.6, "replaces": 1, "fleeting": 500, "liberty": "still" },
+    { "path": [[40, 19], [47, 0], [58, 17]], "width": 6.5, "press": "peak", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.7, "pause": 700, "liberty": "still" },
+    { "path": [[60, 49], [62.6, 50.6]], "width": 6.4, "press": "dot", "ink": 1, "wet": 0.7, "dry": 0, "pace": 0.8, "pause": 900, "replaces": 3, "liberty": "still" }
+  ],
+  "hold": 9000
+}

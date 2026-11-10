@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>墨 · 灵</title>
+<style>
+  html, body { margin: 0; background: #f4efe4; color: #1f1d1a; font-family: 'Kaiti SC', 'STKaiti', serif; }
+  main { max-width: 620px; margin: 0 auto; padding: 48px 24px 120px; }
+  p { color: #6b665c; font-size: 14px; line-height: 1.8; margin: 0; }
+  #stage { height: 300px; display: grid; place-items: center; }
+  #stage.dark { background: #1b1a18; color: #ece6d8; border-radius: 6px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 18px 0 0; font-size: 14px; }
+  .bar button { all: unset; cursor: pointer; padding: 3px 0; border-bottom: 1px solid #c9c1b0; }
+  .bar button:hover { border-color: #1f1d1a; }
+  .bar span { color: #8d877b; }
+  a { color: inherit; }
+</style></head>
+<body><main>
+<p>这是助理的头像：一个圆，活的。<br>指针移上去，它看你（点睛）；停一会儿，它演一小段；闲着（这里是十来秒）它自己慢慢写一幅；它写着的时候碰它，它会回应；按下去，一切干回圆。</p>
+<div id="stage"></div>
+<div class="bar"><span>指针下：</span><span id="hover"></span></div>
+<div class="bar"><span>闲时：</span><span id="leisure"></span></div>
+<div class="bar"><span>状态：</span><button id="think">在想</button><button id="rest">歇着</button><button id="dark">换深色的纸</button><a href="./">长出来的东西 →</a></div>
+</main>
+<script type="module">
+import { summon, validatePiece } from '../src/index.js';
+const paths = await (await fetch('/pieces.json')).json();
+const pieces = [];
+for (const path of paths) { const p = await (await fetch(path)).json(); if (validatePiece(p).ok) pieces.push(p); else console.warn('被拒', path, validatePiece(p).errors); }
+const stage = document.getElementById('stage');
+let spirit;
+const make = () => { spirit?.destroy(); spirit = summon(stage, { size: 72, pieces, idle: { first: [9000, 14000], between: [12000, 20000] } }); };
+make();
+for (const p of pieces) {
+  const b = document.createElement('button'); b.textContent = p.name; b.title = p.idea ?? '';
+  b.onclick = () => { spirit.giveWay(); setTimeout(() => spirit.play(p), 350); };
+  document.getElementById(p.occasion).append(b, ' ');
+}
+document.getElementById('think').onclick = () => spirit.set('thinking');
+document.getElementById('rest').onclick = () => spirit.set('rest');
+document.getElementById('dark').onclick = () => { stage.classList.toggle('dark'); make(); };
+</script></body></html>

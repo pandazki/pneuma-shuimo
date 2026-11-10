@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "id": "tomato",
+  "title": "番茄",
+  "intent": "帮我做个番茄钟，25 分钟倒计时，到点提醒我，再统计一下今天完成了几个番茄，顺便喝杯咖啡也记一下。",
+  "rows": [
+    { "kind": "tally", "key": "tomatoes", "label": "今日完成", "unit": "个" },
+    { "kind": "text", "text": "专注满二十五分钟，添一笔。", "tone": "faint" }
+  ],
+  "ink": {
+    "strokes": [
+      { "path": [[63.6, 57], [56, 60.5], [51.6, 66.5], [51.6, 73.5], [56, 79.5], [63.6, 83], [72.4, 83], [80, 79.5], [84.4, 73.5], [84.4, 66.5], [80, 60.5], [72.4, 57]], "width": 12, "press": [[0, 0.5], [0.12, 1], [0.88, 1], [1, 0.5]], "ink": 0.36, "wet": 1, "dry": 0, "pace": 1.1, "liberty": "calm" },
+      { "path": [[76, 65.5], [78.5, 69.4], [77.1, 73.5], [72.4, 76.3], [66.2, 76.9], [60.6, 74.9], [58.1, 72.4]], "width": 12, "press": "swell", "ink": 0.28, "wet": 0.6, "dry": 0, "pace": 0.7, "pause": 100, "liberty": "calm" },
+      { "path": [[67.5, 56], [59.5, 54.2], [53, 57.5]], "width": 4, "press": "fade", "ink": 0.95, "wet": 0.5, "dry": 0.2, "pace": 0.5, "pause": 300, "liberty": "still" },
+      { "path": [[68.5, 56], [76.5, 54.2], [83, 58.5]], "width": 4, "press": "fade", "ink": 0.95, "wet": 0.5, "dry": 0.2, "pace": 0.5, "pause": 80, "liberty": "still" },
+      { "path": [[68, 57], [66.2, 63], [62.5, 66.5]], "width": 3.5, "press": "fade", "ink": 0.92, "wet": 0.5, "dry": 0.2, "pace": 0.4, "pause": 80, "liberty": "still" },
+      { "path": [[68.5, 57], [73.5, 63.5]], "width": 3.4, "press": "fade", "ink": 0.92, "wet": 0.5, "dry": 0.2, "pace": 0.4, "pause": 80, "liberty": "still" },
+      { "path": [[68, 56], [69.2, 46], [74, 39]], "width": 3, "press": "plain", "ink": 1, "wet": 0.3, "dry": 0.6, "pace": 0.6, "pause": 160, "liberty": "calm" },
+      { "path": [[44, 93.5], [60, 92.6], [78, 92.8], [93, 93.6]], "width": 1.4, "press": "hair", "ink": 0.3, "wet": 0.3, "dry": 0.6, "pace": 0.7, "pause": 280, "liberty": "calm" }
+    ]
+  },
+  "seal": "专",
+  "resets": "daily"
+}

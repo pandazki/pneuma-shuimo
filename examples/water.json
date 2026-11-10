@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "id": "water",
+  "title": "饮水",
+  "intent": "帮我记每天喝了几杯水，一天八杯。",
+  "rows": [
+    { "kind": "tally", "key": "cups", "label": "今日", "goal": 8, "unit": "杯" }
+  ],
+  "ink": { "motif": "ripples" },
+  "seal": "水",
+  "resets": "daily"
+}

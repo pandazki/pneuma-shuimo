@@ -1,0 +1,57 @@
+/* 播放器。纸、墨、朱砂三色之外没有别的颜色；字用楷体。宿主可以改这几个变量。 */
+.shuimo {
+  --shuimo-paper: #f4efe4;
+  --shuimo-ink: #1f1d1a;
+  --shuimo-cinnabar: #b5352b;
+  --shuimo-font: 'TsangerJinKai02', 'Kaiti SC', 'STKaiti', 'KaiTi', 'Songti SC', serif;
+  position: relative;
+  color: var(--shuimo-ink);
+  font-family: var(--shuimo-font);
+  font-size: 16px;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+.shuimo-paper { position: absolute; left: 0; top: 0; pointer-events: none; }
+:where(.shuimo button) { all: unset; cursor: pointer; box-sizing: border-box; }
+.shuimo :focus-visible { outline: 1px solid color-mix(in srgb, var(--shuimo-ink) 45%, transparent); outline-offset: 3px; border-radius: 3px; }
+
+.shuimo-circle { position: absolute; left: 4px; top: 8px; width: 52px; height: 52px; border-radius: 50%; }
+
+/* 字是写上去的：一个字一个字地出现，墨先晕着再清楚。字从不移动。 */
+.shuimo-ch { opacity: 0; filter: blur(1.6px); transition: opacity 240ms ease-out, filter 320ms ease-out; }
+.shuimo-ch.is-written { opacity: 1; filter: none; }
+.shuimo-fade { opacity: 0; transition: opacity 300ms ease-out; }
+.shuimo-fade.is-written { opacity: 1; }
+.shuimo.is-drying .shuimo-ch, .shuimo.is-drying .shuimo-fade, .shuimo.is-drying .shuimo-seal { opacity: 0 !important; transition: opacity 520ms ease-in; }
+.shuimo.is-instant * { transition: none !important; }
+
+.shuimo-title { position: absolute; left: 64px; top: 16px; margin: 0; font-size: 25px; font-weight: 400; letter-spacing: 0.12em; white-space: nowrap; }
+.shuimo-row { position: absolute; left: 64px; height: 38px; display: flex; align-items: center; white-space: nowrap; }
+.shuimo-row.is-text.is-faint, .shuimo-row .shuimo-count { color: color-mix(in srgb, var(--shuimo-ink) 52%, transparent); }
+.shuimo-row.is-text.is-faint { font-size: 14.5px; }
+.shuimo-check { display: flex; align-items: center; height: 38px; padding-left: 28px; padding-right: 8px; }
+.shuimo-check .shuimo-label { transition: color 400ms ease; }
+.shuimo-check[aria-checked='true'] .shuimo-label { color: color-mix(in srgb, var(--shuimo-ink) 42%, transparent); }
+.shuimo-tally { position: absolute; top: 0; height: 38px; }
+.shuimo-count { position: absolute; top: 0; height: 38px; display: flex; align-items: center; font-size: 14px; gap: 10px; font-variant-numeric: tabular-nums; }
+.shuimo-undo { font-size: 13px; opacity: 0.75; padding: 6px 4px; }
+.shuimo-undo[hidden] { display: none; }
+:where(.shuimo-input) { all: unset; font: inherit; width: 262px; height: 30px; color: inherit; user-select: text; }
+.shuimo-input::placeholder { color: color-mix(in srgb, var(--shuimo-ink) 38%, transparent); }
+
+/* 印：未钤时只是一个淡淡的印位；点一下，钤上朱砂，这样东西就留下了。 */
+.shuimo-seal {
+  position: absolute; width: 26px; height: 26px; display: grid !important; place-items: center;
+  font-size: 15px; line-height: 1; border-radius: 3px 4px 3px 5px;
+  color: color-mix(in srgb, var(--shuimo-cinnabar) 46%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--shuimo-cinnabar) 34%, transparent);
+  opacity: 0; transition: opacity 260ms ease-out, background-color 90ms linear, color 90ms linear;
+}
+.shuimo-seal.is-written { opacity: 1; }
+.shuimo-seal[aria-pressed='true'] { background: var(--shuimo-cinnabar); color: var(--shuimo-paper); box-shadow: none; }
+
+.shuimo-hint { position: absolute; left: 6px; top: 0; height: 38px; display: flex; align-items: center; font-size: 13.5px; white-space: nowrap; color: color-mix(in srgb, var(--shuimo-ink) 36%, transparent); }
+.shuimo-hint[hidden] { display: none; }
+.shuimo-gone { opacity: 0; transition: opacity 300ms ease-in; }
+.shuimo-frame { position: absolute; box-sizing: border-box; border: 0.5px dashed color-mix(in srgb, var(--shuimo-cinnabar) 55%, transparent); pointer-events: none; }

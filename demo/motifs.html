@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f4efe4;font:13px 'Kaiti SC',serif;color:#555">
+<canvas id="c" style="position:absolute;left:0;top:0"></canvas><div id="l"></div>
+<script type="module">
+import { lay } from '../src/brush.js';
+import { Paper } from '../src/paper.js';
+import { MOTIFS } from '../src/motifs.js';
+const paper = new Paper(document.getElementById('c'));
+paper.resize(900, 330);
+const K = 2.4;
+Object.entries(MOTIFS).forEach(([id, m], i) => {
+  const ox = 20 + (i % 3) * 290, oy = 20 + Math.floor(i / 3) * 0;
+  const X = 10 + i * 148, Y = 10, k = 1.4;
+  m.strokes.forEach((s, j) => {
+    const t = ([x, y]) => [X + x * k, Y + y * k];
+    const def = { ...s, width: s.width * k };
+    if (s.circle) def.circle = { ...s.circle, centre: t(s.circle.centre), radius: s.circle.radius * k }; else def.path = s.path.map(t);
+    const mark = paper.add(lay(def, i * 31 + j + 5), '#1f1d1a'); mark.written = 1;
+  });
+  const d = document.createElement('div'); d.textContent = id + ' ' + m.name; d.style.cssText = `position:absolute;left:${X}px;top:${Y + 150}px`; document.body.append(d);
+  const b = document.createElement('div'); b.style.cssText = `position:absolute;left:${X}px;top:${Y}px;width:${100*k}px;height:${100*k}px;outline:1px dotted #ccc`; document.body.append(b);
+});
+paper.draw();
+</script>

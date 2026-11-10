@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "bedtime",
+  "title": "睡前",
+  "intent": "我每天睡前要吃药、敷面膜、把手机放到客厅去，老是忘，帮我盯着点。",
+  "rows": [
+    { "kind": "check", "key": "pill", "label": "吃药" },
+    { "kind": "check", "key": "mask", "label": "敷面膜" },
+    { "kind": "check", "key": "phone", "label": "手机放到客厅" }
+  ],
+  "ink": {
+    "strokes": [
+      { "circle": { "centre": [66, 38], "radius": 21, "gap": 140, "gapAt": 180 }, "width": 8, "press": [[0, 0.06], [0.5, 1], [1, 0.06]], "ink": 0.92, "wet": 0.5, "dry": 0.3, "tint": 0.3, "pace": 1, "liberty": "calm" },
+      { "path": [[36, 58], [52, 53], [68, 57], [84, 52], [96, 54]], "width": 6, "press": "ripple", "ink": 0.22, "wet": 1, "dry": 0, "pace": 1, "pause": 340, "liberty": "free" },
+      { "path": [[42, 80], [60, 78], [80, 79], [95, 81]], "width": 1.6, "press": "hair", "ink": 0.5, "wet": 0.3, "dry": 0.6, "pace": 0.8, "pause": 300, "liberty": "calm" },
+      { "path": [[58, 90], [70, 89], [84, 90]], "width": 1.2, "press": "hair", "ink": 0.34, "wet": 0.3, "dry": 0.6, "pace": 0.8, "pause": 120, "liberty": "calm" }
+    ]
+  },
+  "seal": "眠",
+  "resets": "daily"
+}

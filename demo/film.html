@@ -1,0 +1,44 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>墨 · 连续画面</title>
+<style>
+  html, body { margin: 0; background: #f4efe4; color: #1f1d1a; font: 12px/1.4 ui-monospace, Menlo, monospace; }
+  #film { display: grid; grid-template-columns: repeat(5, 240px); gap: 0; padding: 6px; }
+  .cell { width: 240px; height: 262px; position: relative; outline: 0.5px solid #ddd5c4; }
+  .cell .stage { position: absolute; left: 80px; top: 80px; }
+  .cell .box { position: absolute; left: 80px; top: 80px; width: 80px; height: 80px; outline: 0.5px dashed rgba(181, 53, 43, 0.5); }
+  .cell label { position: absolute; left: 6px; bottom: 4px; color: #8d877b; }
+  #err { padding: 20px; color: #8a2a22; white-space: pre-wrap; }
+</style></head><body><div id="film"></div><pre id="err"></pre>
+<script type="module">
+import { summon, validatePiece, filmMoments, composePiece } from '../src/index.js';
+const q = new URLSearchParams(location.search);
+const piece = await (await fetch(q.get('piece'))).json();
+const verdict = validatePiece(piece);
+const film = document.getElementById('film');
+// 每一格是同一段表演的一个时刻；红色虚线是头像自己的方框（0 到 100）。
+const cell = (label, at) => {
+  const el = document.createElement('div'); el.className = 'cell';
+  el.innerHTML = '<div class="box"></div><div class="stage"></div><label></label>';
+  el.querySelector('label').textContent = label;
+  film.append(el);
+  summon(el.querySelector('.stage'), { size: 80, seed: 11, at });
+};
+if (!verdict.ok) document.getElementById('err').textContent = '被拒：\n' + verdict.errors.join('\n');
+else if (q.has('still')) {
+  // 一个时刻放大了看细节，旁边是它在主人屏幕上的实际大小。
+  film.style.cssText = 'display:block;position:relative;width:860px;height:700px';
+  const big = document.createElement('div'); big.style.cssText = 'position:absolute;left:230px;top:230px';
+  const small = document.createElement('div'); small.style.cssText = 'position:absolute;left:760px;top:320px';
+  const tag = document.createElement('label'); tag.style.cssText = 'position:absolute;left:716px;top:420px;color:#8d877b'; tag.textContent = '实际大小（56px）';
+  film.append(big, small, tag);
+  const t = q.has('t') ? Number(q.get('t')) : verdict.plan.written;
+  summon(big, { size: 230, seed: 11, at: { piece, t } });
+  summon(small, { size: 56, seed: 11, at: { piece, t } });
+} else if (q.has('answer')) {
+  const when = verdict.plan.written + 600;
+  const a = composePiece({ ...piece, strokes: piece.answer.map(({ replaces, ...r }) => r), circle: 'keep', hold: 500 }, 'hover');
+  cell('指针来之前', { piece, t: when });
+  for (let i = 1; i <= 9; i += 1) { const dt = (a.total * i) / 9; cell(`回应 +${(dt / 1000).toFixed(2)}s`, { piece, t: when + dt, answer: when }); }
+} else {
+  for (const m of filmMoments(verdict.plan)) cell(`${(m.t / 1000).toFixed(2)}s  ${m.label}`, { piece, t: m.t });
+}
+</script></body></html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>墨 · 一幅</title>
+<link rel="stylesheet" href="../src/player.css">
+<style>html,body{margin:0;background:#f4efe4}#stage{padding:36px 44px}#err{font:13px/1.6 ui-monospace,monospace;color:#8a2a22;white-space:pre-wrap;padding:24px}</style>
+</head><body><div id="stage"></div><pre id="err"></pre>
+<script type="module">
+import { mount, validate } from '../src/index.js';
+const q = new URLSearchParams(location.search);
+const script = await (await fetch(q.get('script'))).json();
+const result = validate(script);
+if (!result.ok) document.getElementById('err').textContent = '被拒：\n' + result.errors.join('\n');
+else {
+  // "used": what it looks like after some use, so both faces of it can be checked.
+  // Faces for checking: "used" is partway through its use, "full" is everything done and every list full.
+  let state;
+  const face = q.get('face');
+  if (face) {
+    state = { _day: 'x' };
+    const SAMPLE = ['第一样', '第二样', '第三样', '第四样', '第五样', '第六样', '第七样', '第八样', '第九样', '第十样'];
+    script.rows.forEach((row, i) => {
+      if (row.kind === 'check') state[row.key] = face === 'full' || i % 2 === 0;
+      if (row.kind === 'tally') state[row.key] = face === 'full' ? (row.goal ?? 20) : Math.max(1, Math.round((row.goal ?? 12) * 0.6));
+      if (row.kind === 'entry') {
+        const max = row.max ?? Math.max(5, row.items?.length ?? 0);
+        const texts = [...(row.items ?? []), ...SAMPLE].slice(0, face === 'full' ? max : Math.max(3, row.items?.length ?? 0));
+        state[row.key] = texts.map((text, j) => ({ text, done: face === 'full' ? j % 2 === 0 : j === 0 }));
+      }
+    });
+    script.resets = 'never';
+  }
+  if (q.has('fold')) setTimeout(() => window.sheet.fold(), Number(q.get('fold')));
+  window.sheet = mount(document.getElementById('stage'), script, { instant: q.has('instant'), at: q.has('at') ? Number(q.get('at')) : undefined, seed: q.has('seed') ? Number(q.get('seed')) : undefined, state, kept: !!face });
+  if (q.has('ink') && window.sheet.plan.inkBox) {
+    // The ink box alone, enlarged, with its frame drawn: for looking at the painting stroke by stroke.
+    const b = window.sheet.plan.inkBox;
+    const frame = document.createElement('div');
+    frame.className = 'shuimo-frame';
+    frame.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.size}px;height:${b.size}px`;
+    window.sheet.el.append(frame);
+    const stage = document.getElementById('stage');
+    stage.style.cssText = `padding:0;position:absolute;left:${10 - b.x}px;top:${10 - b.y}px`;
+  }
+}
+</script></body></html>

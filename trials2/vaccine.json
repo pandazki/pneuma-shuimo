@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "id": "vaccine",
+  "title": "打疫苗",
+  "intent": "明天早上要带孩子去打疫苗，帮我列一下要带的东西，到时候提醒我别忘了。",
+  "rows": [
+    { "kind": "entry", "key": "things", "placeholder": "还要带什么，回车添上", "max": 8, "items": ["接种本", "孩子的医保卡", "水和小零食", "纸巾湿巾"] }
+  ],
+  "ink": {
+    "strokes": [
+      { "path": [[54.2, 71.9], [66.2, 56.5], [78.2, 41.1]], "width": 11, "press": "plain", "ink": 0.3, "wet": 0.85, "dry": 0, "pace": 0.9, "liberty": "calm" },
+      { "path": [[77.6, 41.9], [80.4, 38.3], [82.6, 35.5], [88.4, 28.1], [94.2, 20.7]], "width": 4.5, "press": [[0, 1], [0.2, 0.85], [0.28, 0.3], [1, 0.06]], "ink": 0.95, "wet": 0.4, "dry": 0, "pace": 0.6, "pause": 120, "liberty": "calm" },
+      { "path": [[64.5, 66.0], [60.2, 62.6]], "width": 1.3, "press": "fade", "ink": 0.9, "wet": 0.3, "dry": 0, "pace": 0.4, "pause": 220, "liberty": "still" },
+      { "path": [[69.4, 59.7], [64.0, 55.5]], "width": 1.3, "press": "fade", "ink": 0.9, "wet": 0.3, "dry": 0, "pace": 0.4, "pause": 60, "liberty": "still" },
+      { "path": [[74.4, 53.4], [70.1, 50.0]], "width": 1.3, "press": "fade", "ink": 0.9, "wet": 0.3, "dry": 0, "pace": 0.4, "pause": 60, "liberty": "still" },
+      { "path": [[45.6, 66.5], [53.5, 72.7], [61.4, 78.8]], "width": 2.6, "press": "plain", "ink": 0.92, "wet": 0.5, "dry": 0.1, "pace": 0.5, "pause": 260, "liberty": "calm" },
+      { "path": [[56.6, 68.7], [48.3, 79.4], [40, 90]], "width": 2, "press": "plain", "ink": 0.9, "wet": 0.5, "dry": 0.1, "pace": 0.6, "pause": 80, "liberty": "calm" },
+      { "path": [[34.5, 85.7], [40, 90], [45.5, 94.3]], "width": 3, "press": "plain", "ink": 0.92, "wet": 0.5, "dry": 0.1, "pace": 0.5, "pause": 60, "liberty": "still" }
+    ]
+  },
+  "seal": "苗"
+}

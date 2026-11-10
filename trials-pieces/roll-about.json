@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "id": "roll-about",
+  "name": "骨碌",
+  "idea": "指针一来，圆像被拨了一下的球，骨碌碌往右滚开，缺口跟着转；滚远了停住，缺口朝回对着你，得意地原地蹦了一下，又骨碌碌滚回原处坐好。",
+  "occasion": "hover",
+  "circle": "away",
+  "strokes": [
+    { "circle": { "centre": [84, 50], "gap": 50, "gapAt": 25 }, "width": 9, "press": "plain", "ink": 0.42, "wet": 0.4, "dry": 0.6, "pace": 0.3, "pause": 0, "liberty": "quick" },
+    { "circle": { "centre": [116, 50], "gap": 50, "gapAt": 103 }, "width": 9, "press": "plain", "ink": 0.38, "wet": 0.4, "dry": 0.6, "pace": 0.3, "pause": 300, "replaces": 0, "liberty": "quick" },
+    { "circle": { "centre": [144, 50], "gap": 50, "gapAt": 180 }, "width": 10, "press": "plain", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.5, "pause": 300, "replaces": 1, "liberty": "calm" },
+    { "circle": { "centre": [144, 24], "gap": 50, "gapAt": 180 }, "width": 9, "press": "plain", "ink": 0.6, "wet": 0.4, "dry": 0.5, "pace": 0.3, "pause": 1200, "replaces": 2, "liberty": "quick" },
+    { "circle": { "centre": [144, 50], "gap": 50, "gapAt": 180 }, "width": 10, "press": "plain", "ink": 0.95, "wet": 0.5, "dry": 0.3, "pace": 0.35, "pause": 120, "replaces": 3, "liberty": "calm" },
+    { "circle": { "centre": [116, 50], "gap": 50, "gapAt": 103 }, "width": 9, "press": "plain", "ink": 0.38, "wet": 0.4, "dry": 0.6, "pace": 0.3, "pause": 800, "replaces": 4, "liberty": "quick" },
+    { "circle": { "centre": [84, 50], "gap": 50, "gapAt": 25 }, "width": 9, "press": "plain", "ink": 0.42, "wet": 0.4, "dry": 0.6, "pace": 0.3, "pause": 300, "replaces": 5, "liberty": "quick" }
+  ],
+  "hold": 100
+}

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>墨</title>
+<link rel="stylesheet" href="../src/player.css">
+<style>
+  :root { --paper: #f4efe4; --ink: #1f1d1a; --faint: #8d877b; --line: #ddd5c4; --cinnabar: #b5352b; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); overflow: hidden; font-family: 'TsangerJinKai02', 'Kaiti SC', 'STKaiti', 'KaiTi', serif; -webkit-font-smoothing: antialiased; }
+  /* 一张固定大小的大画布，整张缩放到一屏里。 */
+  #board { position: absolute; left: 50%; top: 50%; width: 1440px; height: 860px; transform-origin: 0 0; }
+  .at { position: absolute; }
+  h1 { margin: 0; font-size: 30px; font-weight: 400; letter-spacing: 0.2em; }
+  .sub { color: var(--faint); font-size: 14.5px; letter-spacing: 0.04em; }
+  .dao { display: flex; gap: 26px; font-size: 14px; color: var(--faint); }
+  .dao b { font-weight: 400; color: var(--ink); font-size: 17px; margin-right: 7px; }
+  .cap { font-size: 13px; color: var(--faint); letter-spacing: 0.3em; }
+  .cap b { font-weight: 400; color: var(--ink); font-size: 19px; letter-spacing: 0.1em; margin-right: 12px; }
+  .rule { height: 0; border-top: 1px solid var(--line); }
+
+  /* 一 · 圆：它现在的状态 */
+  #states { display: flex; gap: 6px; }
+  #states button { all: unset; cursor: pointer; width: 58px; text-align: center; padding: 7px 0 8px; font-size: 21px; color: #b8b0a0; border-bottom: 2px solid transparent; transition: color 300ms; }
+  #states button small { display: block; font-size: 11px; letter-spacing: 0.1em; margin-top: 3px; }
+  #states button.on { color: var(--ink); border-color: var(--ink); }
+  #say { font-size: 16px; line-height: 1.75; min-height: 56px; width: 440px; transition: opacity 300ms; }
+  #say small { display: block; color: var(--faint); font-size: 13px; }
+  #pointer { position: absolute; width: 0; height: 0; opacity: 0; transition: left 700ms cubic-bezier(.2,.7,.2,1), top 700ms cubic-bezier(.2,.7,.2,1), opacity 300ms; pointer-events: none; }
+  #pointer svg { position: absolute; left: -3px; top: -2px; }
+
+  /* 灵 · 小品 */
+  .cell { position: absolute; width: 150px; height: 138px; }
+  .cell .spot { position: absolute; left: 47px; top: 26px; }
+  .cell label { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 14px; }
+  .cell label small { color: var(--faint); font-size: 11px; margin-left: 5px; }
+  .cell label i { font-style: normal; color: var(--cinnabar); font-size: 10.5px; margin-left: 4px; }
+
+  /* 生 · 长出来的东西 */
+  .slot { position: absolute; width: 300px; height: 250px; }
+  .slot .zoom { zoom: 0.64; }
+  .slot .said { position: absolute; left: 41px; bottom: 0; width: 250px; font-size: 12.5px; color: var(--faint); line-height: 1.5; transition: opacity 400ms; }
+
+  /* 一笔 */
+  pre { margin: 0; font: 11.5px/1.62 ui-monospace, 'SF Mono', Menlo, monospace; color: #4a463f; }
+  pre em { font-style: normal; color: var(--faint); }
+  ol { margin: 0; padding: 0; list-style: none; font-size: 14px; line-height: 1.95; }
+  ol b { font-weight: 400; margin-right: 10px; color: var(--cinnabar); }
+  a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--line); }
+</style>
+</head>
+<body>
+<div id="board">
+
+  <!-- 题 -->
+  <h1 class="at" style="left:60px;top:34px">墨</h1>
+  <div class="at sub" style="left:116px;top:47px">一张空白的纸，一个墨圆。圆是助理，它是活的；主人说一句话，它从圆里写出一样能用的东西。</div>
+  <div class="at dao" style="right:60px;top:46px">
+    <span><b>空</b>纸</span><span><b>一</b>圆</span><span><b>二</b>写与干</span><span><b>三</b>笔、墨、时</span><span><b>万物</b>都是一份 JSON</span>
+  </div>
+  <div class="at rule" style="left:60px;right:60px;top:86px"></div>
+
+  <!-- 一 · 圆 -->
+  <div class="at cap" style="left:60px;top:108px"><b>一</b>它此刻的样子</div>
+  <div class="at" id="hero" style="left:196px;top:176px"></div>
+  <div id="pointer"><svg width="15" height="20" viewBox="0 0 15 20"><path d="M1 1 L1 15 L5 11.6 L7.7 18 L10 17 L7.4 10.8 L12.6 10.4 Z" fill="#1f1d1a" stroke="#f4efe4" stroke-width="1"/></svg></div>
+  <div class="at" id="states" style="left:60px;top:384px"></div>
+  <div class="at" id="say" style="left:60px;top:452px"></div>
+
+  <!-- 灵 -->
+  <div class="at cap" style="left:590px;top:108px"><b>灵</b>圆自己的表演 · 每一幅是一份脚本，指针移上去试试</div>
+  <div class="at" id="wall" style="left:590px;top:142px;width:790px;height:290px"></div>
+
+  <div class="at rule" style="left:60px;right:60px;top:528px"></div>
+
+  <!-- 生 -->
+  <div class="at cap" style="left:60px;top:548px"><b>生</b>从圆里写出来、能用的东西 · 点圆收回，点印留下</div>
+  <div class="at" id="grown" style="left:60px;top:586px;width:960px;height:256px"></div>
+
+  <!-- 一笔 -->
+  <div class="at cap" style="left:1050px;top:548px"><b>一笔</b>纸上的一切都是它</div>
+  <pre class="at" style="left:1050px;top:590px">{ <em>// 这就是那个圆</em>
+  "circle": { "centre": [50, 50],
+              "radius": 33,
+              "gap": 50, "gapAt": -52 },
+  "width": 10, "press": "plain",
+  "ink": 0.95, "wet": 0.5, "dry": 0.55
+}</pre>
+  <div class="at" id="one" style="left:1322px;top:640px"></div>
+  <ol class="at" style="left:1050px;top:734px">
+    <li><b>一</b>只有写和干。没有东西移动、旋转或缩放。</li>
+    <li><b>二</b>从圆来，回圆去。每一幅都结束在圆上。</li>
+    <li><b>三</b>脚本是纯数据；每一笔每次写出来都不一样。</li>
+  </ol>
+  <div class="at sub" style="right:60px;bottom:14px;font-size:12px"><a href="avatar.html">头像</a>　<a href="sheets.html">全部长出来的东西</a></div>
+</div>
+
+<script type="module">
+import { summon, mount, validate, validatePiece } from '../src/index.js';
+
+// ── 一屏：整张画布缩放到窗口里 ──
+const board = document.getElementById('board');
+const fit = () => { const k = Math.min(innerWidth / 1440, innerHeight / 860); board.style.transform = `scale(${k}) translate(-50%, -50%)`; };
+addEventListener('resize', fit); fit();
+
+const json = async (path) => (await fetch(path)).json();
+const pieces = [];
+const byModel = new Set(); // 干净的模型只凭 skill 写的
+for (const path of await json('/pieces.json')) { const p = await json(path); if (validatePiece(p).ok) { pieces.push(p); if (!path.startsWith('/pieces/')) byModel.add(p.id); } }
+const scripts = [];
+for (const path of await json('/scripts.json')) { const s = await json(path); if (validate(s).ok) scripts.push(s); }
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const any = (list) => list[Math.floor(Math.random() * list.length)];
+
+// ── 一 · 它此刻的样子：六种状态不停地轮转；点一个就跳过去；指针放到它身上，它就是你的 ──
+const hero = summon(document.getElementById('hero'), { size: 150, pieces, idle: false });
+const pointer = document.getElementById('pointer');
+const say = document.getElementById('say');
+const centre = { x: 196 + 75, y: 176 + 75 };
+const point = async (dx, dy, show = true) => { pointer.style.left = `${centre.x + dx}px`; pointer.style.top = `${centre.y + dy}px`; pointer.style.opacity = show ? 1 : 0; await wait(720); };
+const hover = pieces.filter((p) => p.occasion === 'hover');
+const leisure = pieces.filter((p) => p.occasion === 'leisure');
+
+const STATES = [
+  { id: 'rest', word: '静', note: '无事', say: '无事，一笔静止的圆。', more: '没有时钟在跑；它每次被写出来都不一样。',
+    async run() { hero.set('rest'); await wait(3600); } },
+  { id: 'look', word: '看', note: '指针来了', say: '指针来了：点一个睛，看向你。', more: '指针绕着走，旧的点干去，新的点落在那一侧；停一下，它演一小段。',
+    async run(alive) {
+      hero.set('rest');
+      await point(170, 120, false); await point(64, 40);
+      if (!alive()) return; hero.look(64, 40); await wait(1300);
+      await point(-58, 44); if (!alive()) return; hero.look(-58, 44); await wait(1300);
+      await point(10, -16); if (!alive()) return; hero.look(10, -16); await wait(700);
+      if (!alive()) return;
+      const piece = any(hover); note(`「${piece.name}」`);
+      hero.unlook(); hero.play(piece);
+      await wait(4300); await point(200, 150, false);
+    }, leave() { pointer.style.opacity = 0; hero.unlook(); } },
+  { id: 'think', word: '思', note: '在想', say: '在想：圆在自己的痕上，一遍遍地重写。', more: '旧的一圈淡成痕，新的一圈写上去；每一遍都略有不同。',
+    async run() { hero.set('thinking'); await wait(7400); } },
+  { id: 'work', word: '作', note: '在做事', say: '在做事：笔在圆里，一段一段地走。', more: '前一段干去，后一段才写；做完了，一笔把口合上。',
+    async run(alive) { hero.set('working'); await wait(6200); if (!alive()) return; hero.done(); note('做完了：合口。'); await wait(2900); } },
+  { id: 'idle', word: '闲', note: '很久没事', say: '闲着：慢慢写一幅，停一停，再干回圆里。', more: '文人的闲情，不是屏保；这时指针碰到它，它会回应。',
+    async run(alive) {
+      hero.set('rest'); await wait(500); if (!alive()) return;
+      const piece = any(leisure); note(`「${piece.name}」　${piece.idea ?? ''}`);
+      hero.play(piece, 'leisure', { hold: 2200 });
+      while (alive() && hero.busy) await wait(300);
+    } },
+  { id: 'blank', word: '空', note: '放空', say: '放空：墨淡到只剩一道痕。', more: '过一阵，它再把自己写回来。空即是色，色即是空。',
+    async run() { hero.set('blank'); await wait(11500); } },
+];
+const bar = document.getElementById('states');
+const note = (text) => { say.querySelector('small').textContent = text; };
+let turn = 0;      // every change of state takes a new turn; a run that is no longer the turn stops
+let mine = false;  // the owner's pointer is on it: the show waits
+async function go(i) {
+  const my = ++turn;
+  const alive = () => my === turn;
+  STATES.forEach((s) => s.leave?.());
+  hero.giveWay();
+  const s = STATES[i];
+  [...bar.children].forEach((b, n) => b.classList.toggle('on', n === i));
+  say.innerHTML = `${s.say}<small>${s.more}</small>`;
+  await s.run(alive);
+  if (!alive()) return;
+  while (mine && alive()) await wait(400);
+  if (alive()) go((i + 1) % STATES.length);
+}
+STATES.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.innerHTML = `${s.word}<small>${s.note}</small>`;
+  b.onclick = () => go(i);
+  bar.append(b);
+});
+// 真的指针来了：轮转停下，它回到静，由你来玩；离开两秒后接着转。
+let back = 0;
+hero.el.addEventListener('pointerenter', () => {
+  clearTimeout(back);
+  if (mine) return;
+  mine = true; turn += 1; STATES.forEach((s) => s.leave?.()); hero.set('rest');
+  [...bar.children].forEach((b, n) => b.classList.toggle('on', n === 1));
+  say.innerHTML = `它是你的了。<small>停一下看它演；按下去，一切干回圆。移开两秒，它接着过自己的日子。</small>`;
+});
+hero.el.addEventListener('pointerleave', () => { back = setTimeout(() => { mine = false; go(2); }, 2000); });
+// 真指针下它自己会点睛、演小品（summon 自带）；这里只给它小品。
+go(0);
+
+// ── 灵 · 每一幅小品一个小头像，各自一遍遍地演；指针放上去它们会回应 ──
+const wall = document.getElementById('wall');
+pieces.forEach((p, n) => {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.style.left = `${(n % 5) * 158}px`;
+  cell.style.top = `${Math.floor(n / 5) * 150}px`;
+  cell.innerHTML = `<div class="spot"></div><label>${p.name}<small>${p.occasion === 'hover' ? '指针下' : '闲时'}</small>${byModel.has(p.id) ? '<i>模型写的</i>' : ''}</label>`;
+  cell.title = p.idea ?? '';
+  wall.append(cell);
+  const spirit = summon(cell.querySelector('.spot'), { size: 56, pieces: [p], idle: false });
+  let over = false;
+  cell.querySelector('.spot').addEventListener('pointerenter', () => { over = true; });
+  cell.querySelector('.spot').addEventListener('pointerleave', () => { over = false; });
+  const loop = async () => {
+    await wait(900 + n * 1300 + Math.random() * 1500);
+    for (;;) {
+      if (!over && !spirit.busy && !document.hidden) spirit.play(p, p.occasion, { hold: p.occasion === 'leisure' ? 2600 : undefined });
+      await wait(600);
+      while (spirit.busy) await wait(400);
+      await wait(3200 + Math.random() * 4200);
+    }
+  };
+  loop();
+});
+
+// ── 生 · 三个位置，轮流写出每一样长出来的东西：写出来，用过的样子，再收回圆里 ──
+const used = (script) => {
+  const state = { _day: 'x' };
+  const sample = ['第一样', '第二样', '第三样'];
+  script.rows.forEach((row, i) => {
+    if (row.kind === 'check') state[row.key] = i === 0;
+    if (row.kind === 'tally') state[row.key] = Math.max(1, Math.round((row.goal ?? 10) * 0.6));
+    if (row.kind === 'entry') state[row.key] = (row.items?.length ? row.items : sample).slice(0, 4).map((text, j) => ({ text, done: j === 0 }));
+  });
+  return state;
+};
+const grown = document.getElementById('grown');
+let next = 0;
+[0, 1, 2].forEach((n) => {
+  const slot = document.createElement('div');
+  slot.className = 'slot';
+  slot.style.left = `${n * 322}px`;
+  slot.innerHTML = '<div class="zoom"></div><div class="said"></div>';
+  grown.append(slot);
+  const zoom = slot.querySelector('.zoom'), said = slot.querySelector('.said');
+  let held = false;
+  slot.addEventListener('pointerenter', () => { held = true; });
+  slot.addEventListener('pointerleave', () => { held = false; });
+  const loop = async () => {
+    await wait(600 + n * 2600);
+    for (;;) {
+      // 太高的（清单留了很多空行）在这一条里放不下，留给"全部"那一页。
+      let script; do { script = { ...scripts[next++ % scripts.length], resets: 'never' }; } while (validate(script).plan.height > 330);
+      said.style.opacity = 0;
+      const sheet = mount(zoom, script, { state: used(script), kept: Math.random() < 0.5 });
+      said.textContent = script.intent ? `「${script.intent}」` : '';
+      said.style.top = `${sheet.plan.height * 0.64 + 8}px`; said.style.bottom = 'auto';
+      said.style.opacity = 1;
+      await wait(sheet.plan.total + 6500 + Math.random() * 2500);
+      while (held) await wait(500);
+      said.style.opacity = 0;
+      sheet.fold();
+      await wait(1900);
+      sheet.destroy();
+      await wait(400);
+    }
+  };
+  loop();
+});
+
+// ── 一笔 · 同一份数据，每次写出来都不一样 ──
+const one = summon(document.getElementById('one'), { size: 64, idle: false });
+setInterval(() => { if (!document.hidden) { one.set('thinking'); setTimeout(() => one.set('rest'), 300); } }, 3400);
+</script>
+</body>
+</html>

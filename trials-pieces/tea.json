@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "id": "tea-leaf",
+  "name": "一叶入盏",
+  "idea": "圆是一盏热茶。一粒蜷着的干茶打着旋飘下来，穿过缺口落进盏里，漾开一圈水纹；顿一顿，它在水里舒展成一片叶，一缕茶烟从缺口袅袅升起。",
+  "occasion": "hover",
+  "circle": "keep",
+  "strokes": [
+    { "path": [[107, -31], [111, -39], [120, -39], [123, -31]], "width": 5.4, "press": [[0, 0.6], [0.4, 1], [1, 0.3]], "ink": 0.8, "wet": 0.3, "dry": 0.3, "pace": 0.5, "pause": 100, "liberty": "calm", "fleeting": 100 },
+    { "path": [[95, -11], [86, -10], [84, -2], [90, 4]], "width": 6, "press": [[0, 0.6], [0.4, 1], [1, 0.3]], "ink": 0.9, "wet": 0.3, "dry": 0.3, "pace": 0.5, "pause": 380, "liberty": "calm", "replaces": 0, "fleeting": 100 },
+    { "path": [[41, 58], [45, 51], [52, 53], [58, 45]], "width": 6.4, "press": [[0, 0.6], [0.4, 1], [1, 0.3]], "ink": 0.95, "wet": 0.25, "dry": 0.3, "pace": 0.5, "pause": 380, "liberty": "still", "replaces": 1 },
+    { "circle": { "centre": [50, 50], "radius": 13, "gap": 130, "gapAt": 135 }, "width": 2.2, "press": "taper", "ink": 0.4, "wet": 0.5, "dry": 0.4, "pace": 0.4, "pause": 0, "liberty": "calm" },
+    { "circle": { "centre": [50, 50], "radius": 20, "gap": 70, "gapAt": 150 }, "width": 2.2, "press": "taper", "ink": 0.3, "wet": 0.5, "dry": 0.5, "pace": 0.5, "pause": 120, "liberty": "calm", "replaces": 3, "fleeting": 400 },
+    { "path": [[37, 61], [50, 51], [67, 41]], "width": 12.5, "press": [[0, 0.3], [0.4, 1], [0.75, 0.75], [1, 0.05]], "ink": 0.45, "wet": 0.75, "dry": 0.2, "pace": 1.2, "pause": 1000, "liberty": "leaf", "replaces": 2 },
+    { "path": [[32, 65], [38, 60.5], [46, 55], [54, 50]], "width": 2.4, "press": "hair", "ink": 0.85, "wet": 0.3, "dry": 0.3, "pace": 0.6, "pause": 80, "liberty": "calm" },
+    { "path": [[68, 28], [72, 16], [70, 4], [76, -8], [73, -20]], "width": 3.8, "press": "ripple", "ink": 0.34, "wet": 0.75, "dry": 0.3, "pace": 1.2, "pause": 400, "liberty": "sweep", "fleeting": 1000 },
+    { "path": [[80, -18], [86, -30], [82, -42], [88, -54]], "width": 3.2, "press": "ripple", "ink": 0.25, "wet": 0.75, "dry": 0.4, "pace": 1.1, "pause": 250, "liberty": "sweep", "fleeting": 700 }
+  ],
+  "hold": 350
+}

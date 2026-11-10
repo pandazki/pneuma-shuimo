@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "gym",
+  "title": "健身",
+  "intent": "这周想去三次健身房，帮我记着点。",
+  "rows": [
+    { "kind": "tally", "key": "visits", "label": "本周", "goal": 3, "unit": "次" }
+  ],
+  "ink": {
+    "strokes": [
+      { "path": [[37, 73], [66, 71], [96, 68.5]], "width": 2.6, "press": "plain", "ink": 0.9, "wet": 0.4, "dry": 0.1, "pace": 0.8, "liberty": "calm" },
+      { "path": [[52, 57], [52, 71], [52, 86]], "width": 12, "press": "plain", "ink": 0.95, "wet": 0.45, "dry": 0.15, "tint": 0.3, "pace": 0.8, "pause": 240, "liberty": "calm" },
+      { "path": [[44, 64], [44, 72], [44, 80]], "width": 7, "press": "plain", "ink": 0.75, "wet": 0.4, "dry": 0.3, "pace": 0.6, "pause": 100, "liberty": "calm" },
+      { "path": [[81, 55], [81, 69], [81, 84]], "width": 12, "press": "plain", "ink": 0.95, "wet": 0.45, "dry": 0.15, "tint": 0.3, "pace": 0.8, "pause": 240, "liberty": "calm" },
+      { "path": [[89, 62], [89, 70], [89, 77]], "width": 7, "press": "plain", "ink": 0.75, "wet": 0.4, "dry": 0.3, "pace": 0.6, "pause": 100, "liberty": "calm" },
+      { "path": [[36, 92], [66, 91.5], [97, 90]], "width": 1.4, "press": "hair", "ink": 0.28, "wet": 0.5, "dry": 0.4, "pace": 0.6, "pause": 300, "liberty": "calm" }
+    ]
+  },
+  "seal": "健",
+  "resets": "weekly"
+}
