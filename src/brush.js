@@ -210,7 +210,7 @@ export function lay(def, seed = 1) {
   }
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   for (const [x, y] of pts) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
-  const pad = width / 2 + 2;
+  const pad = width / 2 + 2 + (wet > 0.65 ? Math.min(width, 26) * 0.5 : 0);   // room for a wet stroke to bleed
   return {
     pts, n, cum, total, half, nx, ny, hairs, width, wet, dry, ink,
     bounds: { x: x0 - pad, y: y0 - pad, width: x1 - x0 + pad * 2, height: y1 - y0 + pad * 2 },

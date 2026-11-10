@@ -27,7 +27,7 @@ export class Paper {
 
   /** Size in CSS pixels. Everything written so far is laid again at the new size. */
   resize(width, height) {
-    const ratio = Math.max(1, Math.min(8, (globalThis.devicePixelRatio || 1) * DENSITY.boost));
+    const ratio = Math.max(1, Math.min(5, (globalThis.devicePixelRatio || 1) * DENSITY.boost));
     if (width === this.width && height === this.height && ratio === this.ratio) return;
     this.width = width; this.height = height; this.ratio = ratio;
     this.canvas.width = Math.round(width * ratio);
@@ -61,7 +61,7 @@ export class Paper {
       ctx.fillStyle = mark.colour;
       return ctx;
     });
-    mark.layer = { canvases, ctxs, x, y, painter: new Painter(mark.laid) };
+    mark.layer = { canvases, ctxs, x, y, painter: new Painter(mark.laid), flat: null };
     return mark.layer;
   }
 
@@ -72,17 +72,34 @@ export class Paper {
     for (const mark of this.marks) {
       if (mark.written <= 0) continue;
       const layer = this.layerOf(mark);
+      if (layer.flat) {
+        // A finished stroke is one picture: its bands and its bleed were worked out once, when it was finished.
+        if (mark.opacity > 0.003) { ctx.globalAlpha = Math.min(1, mark.opacity); ctx.drawImage(layer.flat, layer.x, layer.y); }
+        continue;
+      }
       layer.painter.paint(layer.ctxs, mark.written);
-      if (mark.opacity <= 0.003) continue;
       // A wet stroke bleeds into the paper: its edge is soft, never ruled.
       const bleed = Math.max(0, mark.laid.wet - 0.65) * Math.min(mark.laid.width, 26) * 0.34 * this.ratio;
-      ctx.filter = bleed > 0.05 ? `blur(${bleed.toFixed(2)}px)` : 'none';
+      const filter = bleed > 0.05 ? `blur(${bleed.toFixed(2)}px)` : 'none';
+      if (mark.written >= 1) {
+        const first = layer.canvases[0];
+        const flat = surface(first.width, first.height);
+        const fctx = flat.getContext('2d');
+        fctx.filter = filter;
+        layer.canvases.forEach((c, band) => { fctx.globalAlpha = Math.min(1, mark.laid.ink * BANDS[band]); fctx.drawImage(c, 0, 0); });
+        layer.flat = flat;
+        layer.canvases = layer.ctxs = null;      // the bands are not needed again
+        if (mark.opacity > 0.003) { ctx.globalAlpha = Math.min(1, mark.opacity); ctx.drawImage(flat, layer.x, layer.y); }
+        continue;
+      }
+      if (mark.opacity <= 0.003) continue;
+      ctx.filter = filter;
       layer.canvases.forEach((c, band) => {
         ctx.globalAlpha = Math.min(1, mark.opacity * mark.laid.ink * BANDS[band]);
         ctx.drawImage(c, layer.x, layer.y);
       });
+      ctx.filter = 'none';
     }
     ctx.globalAlpha = 1;
-    ctx.filter = 'none';
   }
 }
