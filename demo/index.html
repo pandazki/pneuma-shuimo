@@ -7,259 +7,328 @@
 <link rel="stylesheet" href="../src/player.css">
 <style>
   :root { --paper: #f4efe4; --ink: #1f1d1a; --faint: #8d877b; --line: #ddd5c4; --cinnabar: #b5352b; }
-  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); overflow: hidden; font-family: 'TsangerJinKai02', 'Kaiti SC', 'STKaiti', 'KaiTi', serif; -webkit-font-smoothing: antialiased; }
-  /* 一张固定大小的大画布，整张缩放到一屏里。 */
-  #board { position: absolute; left: 50%; top: 50%; width: 1440px; height: 860px; transform-origin: 0 0; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); overflow: hidden; font-family: 'TsangerJinKai02', 'Kaiti SC', 'STKaiti', 'KaiTi', serif; -webkit-font-smoothing: antialiased; user-select: none; }
+  /* 一张纸：固定的 1000 × 620，整张放大到一屏。 */
+  #stage { position: absolute; left: 50%; top: 50%; width: 880px; height: 550px; transform-origin: 0 0; }
+  #trail { position: absolute; left: 0; top: 0; pointer-events: none; }
   .at { position: absolute; }
-  h1 { margin: 0; font-size: 30px; font-weight: 400; letter-spacing: 0.2em; }
-  .sub { color: var(--faint); font-size: 14.5px; letter-spacing: 0.04em; }
-  .dao { display: flex; gap: 26px; font-size: 14px; color: var(--faint); }
-  .dao b { font-weight: 400; color: var(--ink); font-size: 17px; margin-right: 7px; }
-  .cap { font-size: 13px; color: var(--faint); letter-spacing: 0.3em; }
-  .cap b { font-weight: 400; color: var(--ink); font-size: 19px; letter-spacing: 0.1em; margin-right: 12px; }
-  .rule { height: 0; border-top: 1px solid var(--line); }
+  #me { position: absolute; cursor: grab; touch-action: none; z-index: 5; }
+  #me.held { cursor: grabbing; }
+  #sheet { position: absolute; z-index: 4; }
 
-  /* 一 · 圆：它现在的状态 */
-  #states { display: flex; gap: 6px; }
-  #states button { all: unset; cursor: pointer; width: 58px; text-align: center; padding: 7px 0 8px; font-size: 21px; color: #b8b0a0; border-bottom: 2px solid transparent; transition: color 300ms; }
-  #states button small { display: block; font-size: 11px; letter-spacing: 0.1em; margin-top: 3px; }
-  #states button.on { color: var(--ink); border-color: var(--ink); }
-  #say { font-size: 16px; line-height: 1.75; min-height: 56px; width: 440px; transition: opacity 300ms; }
-  #say small { display: block; color: var(--faint); font-size: 13px; }
-  #pointer { position: absolute; width: 0; height: 0; opacity: 0; transition: left 700ms cubic-bezier(.2,.7,.2,1), top 700ms cubic-bezier(.2,.7,.2,1), opacity 300ms; pointer-events: none; }
-  #pointer svg { position: absolute; left: -3px; top: -2px; }
+  /* 它说的话：一个字一个字写出来。 */
+  #say { left: 56px; bottom: 40px; font-size: 21px; letter-spacing: 0.06em; height: 30px; white-space: nowrap; }
+  #say span { opacity: 0; filter: blur(2px); transition: opacity 260ms ease-out, filter 340ms ease-out; }
+  #say span.w { opacity: 1; filter: none; }
+  #say.dry span { opacity: 0; transition: opacity 380ms ease-in; }
+  #hint { left: 56px; bottom: 18px; font-size: 13px; color: var(--faint); letter-spacing: 0.08em; transition: opacity 500ms; }
 
-  /* 灵 · 小品 */
-  .cell { position: absolute; width: 150px; height: 138px; }
-  .cell .spot { position: absolute; left: 47px; top: 26px; }
-  .cell label { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 14px; }
-  .cell label small { color: var(--faint); font-size: 11px; margin-left: 5px; }
-  .cell label i { font-style: normal; color: var(--cinnabar); font-size: 10.5px; margin-left: 4px; }
+  /* 主人的话：可以把它放上去，也可以直接点。 */
+  #words { right: 44px; top: 92px; width: 250px; opacity: 0; transition: opacity 1200ms; }
+  #words.on { opacity: 1; }
+  #words h2 { margin: 0 0 6px; font-size: 12.5px; font-weight: 400; color: var(--faint); letter-spacing: 0.3em; }
+  #words h2:not(:first-child) { margin-top: 22px; }
+  .word { all: unset; display: block; box-sizing: border-box; width: 100%; cursor: pointer; white-space: nowrap; font-size: 15.5px; line-height: 1; padding: 9px 0 9px 14px; position: relative; color: #55514a; transition: color 250ms; }
+  .word::before { content: ''; position: absolute; left: 0; top: 50%; width: 5px; height: 5px; margin-top: -2px; border-radius: 50%; background: currentColor; opacity: 0.3; transition: opacity 250ms, background 250ms; }
+  .word:hover, .word.over { color: var(--ink); }
+  .word.over::before, .word.now::before { opacity: 1; background: var(--cinnabar); }
+  .word.now { color: var(--ink); }
+  .word small { color: var(--cinnabar); font-size: 10.5px; margin-left: 6px; opacity: 0.8; }
 
-  /* 生 · 长出来的东西 */
-  .slot { position: absolute; width: 300px; height: 250px; }
-  .slot .zoom { zoom: 0.64; }
-  .slot .said { position: absolute; left: 41px; bottom: 0; width: 250px; font-size: 12.5px; color: var(--faint); line-height: 1.5; transition: opacity 400ms; }
-
-  /* 一笔 */
-  pre { margin: 0; font: 11.5px/1.62 ui-monospace, 'SF Mono', Menlo, monospace; color: #4a463f; }
-  pre em { font-style: normal; color: var(--faint); }
-  ol { margin: 0; padding: 0; list-style: none; font-size: 14px; line-height: 1.95; }
-  ol b { font-weight: 400; margin-right: 10px; color: var(--cinnabar); }
-  a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--line); }
+  h1 { margin: 0; font-size: 26px; font-weight: 400; }
+  .faint { color: var(--faint); font-size: 12.5px; letter-spacing: 0.1em; }
+  a, .link { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; cursor: pointer; }
+  #json { right: 44px; bottom: 40px; width: 250px; max-height: 250px; overflow: auto; margin: 0; padding: 10px 12px; box-sizing: border-box; background: rgba(255, 253, 247, 0.92); border: 1px solid var(--line); font: 9.5px/1.55 ui-monospace, 'SF Mono', Menlo, monospace; color: #4a463f; white-space: pre-wrap; word-break: break-all; display: none; z-index: 8; user-select: text; }
+  #json.on { display: block; }
 </style>
 </head>
 <body>
-<div id="board">
+<div id="stage">
+  <canvas id="trail"></canvas>
+  <h1 class="at" style="left:56px;top:30px">墨</h1>
+  <div class="at faint" style="left:96px;top:41px">pneuma-shuimo</div>
+  <div class="at faint" style="right:44px;top:41px"><a href="board.html">全部案例</a>　<span class="link" id="showJson">看它写的脚本</span></div>
 
-  <!-- 题 -->
-  <h1 class="at" style="left:60px;top:34px">墨</h1>
-  <div class="at sub" style="left:116px;top:47px">一张空白的纸，一个墨圆。圆是助理，它是活的；主人说一句话，它从圆里写出一样能用的东西。</div>
-  <div class="at dao" style="right:60px;top:46px">
-    <span><b>空</b>纸</span><span><b>一</b>圆</span><span><b>二</b>写与干</span><span><b>三</b>笔、墨、时</span><span><b>万物</b>都是一份 JSON</span>
-  </div>
-  <div class="at rule" style="left:60px;right:60px;top:86px"></div>
+  <div id="sheet"></div>
+  <div id="me"></div>
 
-  <!-- 一 · 圆 -->
-  <div class="at cap" style="left:60px;top:108px"><b>一</b>它此刻的样子</div>
-  <div class="at" id="hero" style="left:196px;top:176px"></div>
-  <div id="pointer"><svg width="15" height="20" viewBox="0 0 15 20"><path d="M1 1 L1 15 L5 11.6 L7.7 18 L10 17 L7.4 10.8 L12.6 10.4 Z" fill="#1f1d1a" stroke="#f4efe4" stroke-width="1"/></svg></div>
-  <div class="at" id="states" style="left:60px;top:384px"></div>
-  <div class="at" id="say" style="left:60px;top:452px"></div>
-
-  <!-- 灵 -->
-  <div class="at cap" style="left:590px;top:108px"><b>灵</b>圆自己的表演 · 每一幅是一份脚本，指针移上去试试</div>
-  <div class="at" id="wall" style="left:590px;top:142px;width:790px;height:290px"></div>
-
-  <div class="at rule" style="left:60px;right:60px;top:528px"></div>
-
-  <!-- 生 -->
-  <div class="at cap" style="left:60px;top:548px"><b>生</b>从圆里写出来、能用的东西 · 点圆收回，点印留下</div>
-  <div class="at" id="grown" style="left:60px;top:586px;width:960px;height:256px"></div>
-
-  <!-- 一笔 -->
-  <div class="at cap" style="left:1050px;top:548px"><b>一笔</b>纸上的一切都是它</div>
-  <pre class="at" style="left:1050px;top:590px">{ <em>// 这就是那个圆</em>
-  "circle": { "centre": [50, 50],
-              "radius": 33,
-              "gap": 50, "gapAt": -52 },
-  "width": 10, "press": "plain",
-  "ink": 0.95, "wet": 0.5, "dry": 0.55
-}</pre>
-  <div class="at" id="one" style="left:1322px;top:640px"></div>
-  <ol class="at" style="left:1050px;top:734px">
-    <li><b>一</b>只有写和干。没有东西移动、旋转或缩放。</li>
-    <li><b>二</b>从圆来，回圆去。每一幅都结束在圆上。</li>
-    <li><b>三</b>脚本是纯数据；每一笔每次写出来都不一样。</li>
-  </ol>
-  <div class="at sub" style="right:60px;bottom:14px;font-size:12px"><a href="avatar.html">头像</a>　<a href="sheets.html">全部长出来的东西</a></div>
+  <div class="at" id="words"></div>
+  <div class="at" id="say"></div>
+  <div class="at" id="hint"></div>
+  <pre class="at" id="json"></pre>
 </div>
 
 <script type="module">
-import { summon, mount, validate, validatePiece } from '../src/index.js';
+import { summon, mount, validate, validatePiece, Paper, DENSITY, lay } from '../src/index.js';
 
-// ── 一屏：整张画布缩放到窗口里 ──
-const board = document.getElementById('board');
-const fit = () => { const k = Math.min(innerWidth / 1440, innerHeight / 860); board.style.transform = `scale(${k}) translate(-50%, -50%)`; };
+// ── 纸 ──
+const stage = document.getElementById('stage');
+const W = 880, H = 550, SIZE = 56;
+let S = Math.min(innerWidth / W, innerHeight / H);
+DENSITY.boost = Math.min(2.2, S);           // 放大了看，墨也要按放大后的像素来画
+const fit = () => { S = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = `scale(${S}) translate(-50%, -50%)`; };
 addEventListener('resize', fit); fit();
-
-const json = async (path) => (await fetch(path)).json();
-const pieces = [];
-const byModel = new Set(); // 干净的模型只凭 skill 写的
-for (const path of await json('/pieces.json')) { const p = await json(path); if (validatePiece(p).ok) { pieces.push(p); if (!path.startsWith('/pieces/')) byModel.add(p.id); } }
-const scripts = [];
-for (const path of await json('/scripts.json')) { const s = await json(path); if (validate(s).ok) scripts.push(s); }
+const local = (e) => { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / S, y: (e.clientY - r.top) / S }; };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const any = (list) => list[Math.floor(Math.random() * list.length)];
+const json = async (path) => (await fetch(path)).json();
 
-// ── 一 · 它此刻的样子：六种状态不停地轮转；点一个就跳过去；指针放到它身上，它就是你的 ──
-const hero = summon(document.getElementById('hero'), { size: 150, pieces, idle: false });
-const pointer = document.getElementById('pointer');
-const say = document.getElementById('say');
-const centre = { x: 196 + 75, y: 176 + 75 };
-const point = async (dx, dy, show = true) => { pointer.style.left = `${centre.x + dx}px`; pointer.style.top = `${centre.y + dy}px`; pointer.style.opacity = show ? 1 : 0; await wait(720); };
-const hover = pieces.filter((p) => p.occasion === 'hover');
-const leisure = pieces.filter((p) => p.occasion === 'leisure');
+// ── 它会的：小品，和主人说过的话 ──
+const pieces = {};
+for (const path of await json('/pieces.json')) { const p = await json(path); if (validatePiece(p).ok) pieces[p.id] = p; }
+const scripts = {};
+for (const path of await json('/scripts.json')) { const s = await json(path); if (validate(s).ok) scripts[s.id] = s; }
+const hoverPieces = Object.values(pieces).filter((p) => p.occasion === 'hover' && p.id !== 'roll-about');
 
-const STATES = [
-  { id: 'rest', word: '静', note: '无事', say: '无事，一笔静止的圆。', more: '没有时钟在跑；它每次被写出来都不一样。',
-    async run() { hero.set('rest'); await wait(3600); } },
-  { id: 'look', word: '看', note: '指针来了', say: '指针来了：点一个睛，看向你。', more: '指针绕着走，旧的点干去，新的点落在那一侧；停一下，它演一小段。',
-    async run(alive) {
-      hero.set('rest');
-      await point(170, 120, false); await point(64, 40);
-      if (!alive()) return; hero.look(64, 40); await wait(1300);
-      await point(-58, 44); if (!alive()) return; hero.look(-58, 44); await wait(1300);
-      await point(10, -16); if (!alive()) return; hero.look(10, -16); await wait(700);
-      if (!alive()) return;
-      const piece = any(hover); note(`「${piece.name}」`);
-      hero.unlook(); hero.play(piece);
-      await wait(4300); await point(200, 150, false);
-    }, leave() { pointer.style.opacity = 0; hero.unlook(); } },
-  { id: 'think', word: '思', note: '在想', say: '在想：圆在自己的痕上，一遍遍地重写。', more: '旧的一圈淡成痕，新的一圈写上去；每一遍都略有不同。',
-    async run() { hero.set('thinking'); await wait(7400); } },
-  { id: 'work', word: '作', note: '在做事', say: '在做事：笔在圆里，一段一段地走。', more: '前一段干去，后一段才写；做完了，一笔把口合上。',
-    async run(alive) { hero.set('working'); await wait(6200); if (!alive()) return; hero.done(); note('做完了：合口。'); await wait(2900); } },
-  { id: 'idle', word: '闲', note: '很久没事', say: '闲着：慢慢写一幅，停一停，再干回圆里。', more: '文人的闲情，不是屏保；这时指针碰到它，它会回应。',
-    async run(alive) {
-      hero.set('rest'); await wait(500); if (!alive()) return;
-      const piece = any(leisure); note(`「${piece.name}」　${piece.idea ?? ''}`);
-      hero.play(piece, 'leisure', { hold: 2200 });
-      while (alive() && hero.busy) await wait(300);
-    } },
-  { id: 'blank', word: '空', note: '放空', say: '放空：墨淡到只剩一道痕。', more: '过一阵，它再把自己写回来。空即是色，色即是空。',
-    async run() { hero.set('blank'); await wait(11500); } },
-];
-const bar = document.getElementById('states');
-const note = (text) => { say.querySelector('small').textContent = text; };
-let turn = 0;      // every change of state takes a new turn; a run that is no longer the turn stops
-let mine = false;  // the owner's pointer is on it: the show waits
-async function go(i) {
+const WORDS = [
+  { head: '对它说一句' },
+  { say: '帮我记每天喝了几杯水', grow: 'water' },
+  { say: '每天早上，我要做三件事', grow: 'morning' },
+  { say: '明天有雨，别让我忘了带伞', grow: 'umbrella' },
+  { say: '这周想去三次健身房', grow: 'gym', model: true },
+  { head: '或者，让它自己玩' },
+  { say: '闲着的时候，钓会儿鱼吧', play: 'fishing', model: true },
+  { say: '我最近迷上喝茶了', play: 'tea-leaf', model: true },
+  { say: '困了就睡一会儿', play: 'sleeping-cat' },
+  { say: '什么也别想', blank: true },
+].filter((w) => w.head || w.blank || (w.grow && scripts[w.grow]) || (w.play && pieces[w.play]));
+
+// ── 主角 ──
+const me = document.getElementById('me');
+const HOME = { x: 270, y: 215 };     // 纸的中间偏左
+const DESK = { x: 70, y: 124 };      // 它写东西的地方：右边和下边留得出一张纸
+let pos = { ...HOME };
+const place = () => { me.style.left = `${pos.x}px`; me.style.top = `${pos.y}px`; };
+place();
+const spirit = summon(me, { size: SIZE, pieces: hoverPieces, idle: false });
+
+// 它走过的那一笔，写在整张纸上。
+const trail = new Paper(document.getElementById('trail'));
+trail.resize(W, H);
+const INK = getComputedStyle(stage).color;
+const marks = new Set();
+let frame = 0;
+const tick = (now) => {
+  frame = 0;
+  for (const m of marks) {
+    m.mark.written = Math.max(m.mark.written, Math.min(1, (now - m.t0) / m.dur));
+    const gone = now < m.dryAt ? 0 : Math.min(1, (now - m.dryAt) / m.dryDur);
+    m.mark.opacity = 1 - gone;
+    if (gone >= 1) { trail.remove(m.mark); marks.delete(m); }
+  }
+  trail.draw();
+  if (marks.size) frame = requestAnimationFrame(tick);
+};
+/** 它自己去别处：圆在原处干去，一笔扫过去，在那里重新写出来。它从不滑过去。 */
+async function travel(to) {
+  const a = { x: pos.x + SIZE / 2, y: pos.y + SIZE / 2 }, b = { x: to.x + SIZE / 2, y: to.y + SIZE / 2 };
+  const far = Math.hypot(b.x - a.x, b.y - a.y);
+  if (far < 12) return;
+  const ux = (b.x - a.x) / far, uy = (b.y - a.y) / far;
+  const bow = Math.min(60, far * 0.16) * (b.x > a.x ? -1 : 1);
+  const from = [a.x + ux * 22, a.y + uy * 22], end = [b.x - ux * 20, b.y - uy * 20];
+  const mid = [(a.x + b.x) / 2 - uy * bow, (a.y + b.y) / 2 + ux * bow];
+  const dur = Math.min(900, 380 + far * 0.9);
+  const now = performance.now();
+  // 离开时还按着，中间提起来写干，快到时再按下去。
+  const def = { path: [from, [(from[0] + mid[0]) / 2 - uy * bow * 0.4, (from[1] + mid[1]) / 2 + ux * bow * 0.4], mid, [(mid[0] + end[0]) / 2 - uy * bow * 0.4, (mid[1] + end[1]) / 2 + ux * bow * 0.4], end], width: 7.5, press: [[0, 0.75], [0.12, 1], [0.5, 0.3], [0.86, 0.5], [1, 0.9]], ink: 0.92, wet: 0.22, dry: 0.95, liberty: 'sweep' };
+  marks.add({ mark: trail.add(lay(def, 1 + Math.floor(Math.random() * 1e9)), INK), t0: now, dur, dryAt: now + dur * 0.75, dryDur: 900 });
+  if (!frame) frame = requestAnimationFrame(tick);
+  spirit.dryAway(420);
+  await wait(dur * 0.8);
+  pos = { ...to }; place();
+  spirit.rewrite(560);
+  await wait(620);
+}
+
+// ── 它说话 ──
+const sayEl = document.getElementById('say'), hintEl = document.getElementById('hint');
+let saying = 0;
+async function say(text, hint = '') {
+  const my = ++saying;
+  sayEl.classList.add('dry');
+  hintEl.style.opacity = 0;
+  await wait(sayEl.textContent ? 300 : 0);
+  if (my !== saying) return;
+  sayEl.classList.remove('dry');
+  sayEl.textContent = '';
+  [...text].forEach((ch, i) => { const s = document.createElement('span'); s.textContent = ch; sayEl.append(s); setTimeout(() => { if (my === saying) s.classList.add('w'); }, 40 + i * 70); });
+  hintEl.textContent = hint;
+  setTimeout(() => { if (my === saying) hintEl.style.opacity = hint ? 1 : 0; }, 300 + [...text].length * 70);
+  await wait(200 + [...text].length * 70);
+}
+
+// ── 它听懂的话 ──
+const wordsEl = document.getElementById('words');
+const jsonEl = document.getElementById('json');
+const showScript = (obj) => { jsonEl.textContent = obj ? JSON.stringify(obj, null, 1).replace(/\[\s+(-?[\d.]+),\s+(-?[\d.]+)\s+\]/g, '[$1, $2]') : '它还没写什么。'; };
+showScript(null);
+document.getElementById('showJson').onclick = () => jsonEl.classList.toggle('on');
+for (const w of WORDS) {
+  if (w.head) { const h = document.createElement('h2'); h.textContent = w.head; wordsEl.append(h); continue; }
+  const b = document.createElement('button');
+  b.className = 'word'; b.type = 'button';
+  b.innerHTML = `「${w.say}」${w.model ? '<small>模型写的</small>' : ''}`;
+  b.onclick = () => { touched(); hear(w); };
+  w.el = b;
+  wordsEl.append(b);
+}
+
+let sheet = null;     // 它写出来、还在纸上的那一样
+let turn = 0;         // 每一件事占一个回合；回合过了，没做完的就停手
+const done = { hover: false, carry: false, word: false, use: false, fold: false };
+const mark = (w) => WORDS.forEach((x) => x.el?.classList.toggle('now', x === w));
+
+/** 收回去：纸上的东西干回圆里。 */
+async function fold(quiet = false) {
+  if (!sheet) return;
+  const s = sheet; sheet = null;
+  s.fold();
+  spirit.rewrite(600);
+  mark(null);
+  if (!quiet) say('从圆里来，回圆里去。');
+  await wait(900);
+  s.destroy();
+}
+
+/** 主人说了一句话。 */
+async function hear(w) {
   const my = ++turn;
   const alive = () => my === turn;
-  STATES.forEach((s) => s.leave?.());
-  hero.giveWay();
-  const s = STATES[i];
-  [...bar.children].forEach((b, n) => b.classList.toggle('on', n === i));
-  say.innerHTML = `${s.say}<small>${s.more}</small>`;
-  await s.run(alive);
+  done.word = true;
+  spirit.set('rest'); spirit.giveWay();
+  await fold(true);
   if (!alive()) return;
-  while (mine && alive()) await wait(400);
-  if (alive()) go((i + 1) % STATES.length);
+  mark(w);
+  say(`「${w.say}」`);
+  await wait(500);
+  if (w.blank) {
+    await travel(HOME); if (!alive()) return;
+    spirit.set('blank'); showScript(null);
+    await say('放空。', '墨淡到只剩一道痕；过一阵，我再把自己写回来。');
+    return;
+  }
+  if (w.play) {
+    const piece = pieces[w.play];
+    await travel(HOME); if (!alive()) return;
+    spirit.set('thinking'); await say('我想想。'); await wait(1900); if (!alive()) return;
+    spirit.set('rest'); await wait(700); if (!alive()) return;
+    showScript(piece);
+    say(`「${piece.name}」`, piece.answer ? '它在的时候，把指针放到我身上试试。' : '这一段是一份 JSON：几笔，什么时候写，什么时候干。');
+    spirit.play(piece, 'leisure', { hold: piece.occasion === 'leisure' ? 5000 : 900 });
+    while (alive() && spirit.busy) await wait(300);
+    if (alive()) { mark(null); say('演完了。', '想再看，再点一次。'); }
+    return;
+  }
+  const script = { ...scripts[w.grow], resets: 'never' };
+  await travel(DESK); if (!alive()) return;
+  spirit.set('thinking'); await say('我想想。'); await wait(2100); if (!alive()) return;
+  spirit.set('working'); await say('在写。'); await wait(2300); if (!alive()) return;
+  spirit.done(); await wait(1900); if (!alive()) return;
+  showScript(script);
+  const el = document.getElementById('sheet');
+  el.style.left = `${pos.x + SIZE / 2 - 30}px`; el.style.top = `${pos.y + SIZE / 2 - 34}px`;
+  sheet = mount(el, script, { circle: false, onState: () => { if (!done.use) { done.use = true; say('它是真的。', '用完了，点一下我，它就收回去。'); } }, onKeep: (k) => say(k ? '钤了印，它就留下了。' : '印取掉了。') });
+  await wait(sheet.plan.usable + 300); if (!alive()) return;
+  say('写出来了。', done.use ? '点一下我，它就收回去。' : '它是真的：点一点试试。');
 }
-STATES.forEach((s, i) => {
-  const b = document.createElement('button');
-  b.innerHTML = `${s.word}<small>${s.note}</small>`;
-  b.onclick = () => go(i);
-  bar.append(b);
-});
-// 真的指针来了：轮转停下，它回到静，由你来玩；离开两秒后接着转。
-let back = 0;
-hero.el.addEventListener('pointerenter', () => {
-  clearTimeout(back);
-  if (mine) return;
-  mine = true; turn += 1; STATES.forEach((s) => s.leave?.()); hero.set('rest');
-  [...bar.children].forEach((b, n) => b.classList.toggle('on', n === 1));
-  say.innerHTML = `它是你的了。<small>停一下看它演；按下去，一切干回圆。移开两秒，它接着过自己的日子。</small>`;
-});
-hero.el.addEventListener('pointerleave', () => { back = setTimeout(() => { mine = false; go(2); }, 2000); });
-// 真指针下它自己会点睛、演小品（summon 自带）；这里只给它小品。
-go(0);
 
-// ── 灵 · 每一幅小品一个小头像，各自一遍遍地演；指针放上去它们会回应 ──
-const wall = document.getElementById('wall');
-pieces.forEach((p, n) => {
-  const cell = document.createElement('div');
-  cell.className = 'cell';
-  cell.style.left = `${(n % 5) * 158}px`;
-  cell.style.top = `${Math.floor(n / 5) * 150}px`;
-  cell.innerHTML = `<div class="spot"></div><label>${p.name}<small>${p.occasion === 'hover' ? '指针下' : '闲时'}</small>${byModel.has(p.id) ? '<i>模型写的</i>' : ''}</label>`;
-  cell.title = p.idea ?? '';
-  wall.append(cell);
-  const spirit = summon(cell.querySelector('.spot'), { size: 56, pieces: [p], idle: false });
-  let over = false;
-  cell.querySelector('.spot').addEventListener('pointerenter', () => { over = true; });
-  cell.querySelector('.spot').addEventListener('pointerleave', () => { over = false; });
-  const loop = async () => {
-    await wait(900 + n * 1300 + Math.random() * 1500);
-    for (;;) {
-      if (!over && !spirit.busy && !document.hidden) spirit.play(p, p.occasion, { hold: p.occasion === 'leisure' ? 2600 : undefined });
-      await wait(600);
-      while (spirit.busy) await wait(400);
-      await wait(3200 + Math.random() * 4200);
+// ── 拖：带着走只是位置跟手，形不变；放到一句话上，就是对它说了这句话 ──
+let held = null;
+const wordAt = (x, y) => WORDS.find((w) => { if (!w.el) return false; const r = w.el.getBoundingClientRect(), s = stage.getBoundingClientRect(); const l = (r.left - s.left) / S, t = (r.top - s.top) / S; return x > l - 30 && x < l + r.width / S && y > t - 6 && y < t + r.height / S + 6; });
+me.addEventListener('pointerdown', (e) => {
+  touched();
+  const p = local(e);
+  held = { dx: p.x - pos.x, dy: p.y - pos.y, x0: p.x, y0: p.y, moved: false, tx: pos.x, ty: pos.y };
+  me.setPointerCapture(e.pointerId);
+});
+me.addEventListener('pointermove', (e) => {
+  if (!held) return;
+  const p = local(e);
+  if (!held.moved && Math.hypot(p.x - held.x0, p.y - held.y0) > 4) {
+    held.moved = true; me.classList.add('held');
+    turn += 1; spirit.set('rest'); fold(true);
+    if (!done.carry) say('带我去哪？', '放到右边的一句话上；或者随便放个地方。');
+    follow();
+  }
+  held.tx = Math.max(8, Math.min(W - SIZE - 8, p.x - held.dx)); held.ty = Math.max(8, Math.min(H - SIZE - 8, p.y - held.dy));
+  if (held.moved) { const w = wordAt(held.tx + SIZE / 2, held.ty + SIZE / 2); WORDS.forEach((x) => x.el?.classList.toggle('over', x === w)); }
+});
+const follow = () => { if (!held) return; pos.x += (held.tx - pos.x) * 0.32; pos.y += (held.ty - pos.y) * 0.32; place(); requestAnimationFrame(follow); };
+me.addEventListener('pointerup', async () => {
+  if (!held) return;
+  const h = held; held = null; me.classList.remove('held');
+  WORDS.forEach((x) => x.el?.classList.remove('over'));
+  if (!h.moved) {                    // 只是点了一下
+    if (sheet) { done.fold = true; fold(); }
+    return;
+  }
+  pos.x = h.tx; pos.y = h.ty; place();
+  done.carry = true;
+  const w = wordAt(pos.x + SIZE / 2, pos.y + SIZE / 2);
+  if (w) { hear(w); return; }
+  say('好，我就待在这儿。', '你带我走，只是挪位置；我自己走的时候，是一笔过去。');
+});
+
+// ── 它看得见指针：指针在附近，它点一个睛看过去 ──
+let eye = { on: false, angle: 0, at: 0 };
+stage.addEventListener('pointermove', (e) => {
+  if (held || spirit.busy || spirit.state !== 'rest') return;
+  const p = local(e);
+  const dx = p.x - (pos.x + SIZE / 2), dy = p.y - (pos.y + SIZE / 2), far = Math.hypot(dx, dy);
+  const now = performance.now();
+  if (far < SIZE * 0.6) { eye.on = false; return; }      // 在它身上：它自己会看（summon 自带）
+  if (far > 210) { if (eye.on) { spirit.unlook(); eye.on = false; } return; }
+  const angle = Math.atan2(dy, dx);
+  const turned = Math.abs(Math.atan2(Math.sin(angle - eye.angle), Math.cos(angle - eye.angle)));
+  if (!eye.on || (turned > 0.75 && now - eye.at > 650)) { spirit.look(dx, dy); eye = { on: true, angle, at: now }; }
+});
+me.addEventListener('pointerenter', () => { touched(); if (!done.hover && spirit.state === 'rest' && !sheet) { done.hover = true; say('我看见你了。', '停一下别动，我给你演一小段。'); } });
+
+// ── 没人理它的时候：它过自己的日子，也顺便把自己介绍一遍 ──
+let last = performance.now();
+let self = true;                       // 还没人碰过它：它自己演示
+function touched() { last = performance.now(); self = false; }
+stage.addEventListener('pointerdown', touched);
+const demoWords = WORDS.filter((w) => w.grow || w.play);
+let demoAt = 0;
+async function life() {
+  await wait(900);
+  await say('我是墨。', '一张纸，一个圆。圆就是我。');
+  await wait(2600);
+  wordsEl.classList.add('on');
+  await say('我是活的。', '把指针移过来；按住我，可以带着我走。');
+  for (;;) {
+    await wait(1000);
+    const quiet = performance.now() - last;
+    if (held || spirit.busy || document.hidden) continue;
+    if (self && quiet > 6500 && spirit.state === 'rest' && !sheet) {
+      // 没人来：它自己挑一句话做给你看，做完收回去。
+      const w = demoWords[demoAt++ % demoWords.length];
+      await say('没人说话，我自己来。'); await wait(900);
+      const my = turn + 1;
+      await hear(w);
+      if (turn !== my) continue;
+      await wait(w.grow ? 5200 : 1200);
+      if (turn !== my || !self) continue;
+      await fold(); await wait(1200);
+      if (turn !== my) continue;
+      await travel(HOME);
+      last = performance.now() - 2500;
+      continue;
     }
-  };
-  loop();
-});
-
-// ── 生 · 三个位置，轮流写出每一样长出来的东西：写出来，用过的样子，再收回圆里 ──
-const used = (script) => {
-  const state = { _day: 'x' };
-  const sample = ['第一样', '第二样', '第三样'];
-  script.rows.forEach((row, i) => {
-    if (row.kind === 'check') state[row.key] = i === 0;
-    if (row.kind === 'tally') state[row.key] = Math.max(1, Math.round((row.goal ?? 10) * 0.6));
-    if (row.kind === 'entry') state[row.key] = (row.items?.length ? row.items : sample).slice(0, 4).map((text, j) => ({ text, done: j === 0 }));
-  });
-  return state;
-};
-const grown = document.getElementById('grown');
-let next = 0;
-[0, 1, 2].forEach((n) => {
-  const slot = document.createElement('div');
-  slot.className = 'slot';
-  slot.style.left = `${n * 322}px`;
-  slot.innerHTML = '<div class="zoom"></div><div class="said"></div>';
-  grown.append(slot);
-  const zoom = slot.querySelector('.zoom'), said = slot.querySelector('.said');
-  let held = false;
-  slot.addEventListener('pointerenter', () => { held = true; });
-  slot.addEventListener('pointerleave', () => { held = false; });
-  const loop = async () => {
-    await wait(600 + n * 2600);
-    for (;;) {
-      // 太高的（清单留了很多空行）在这一条里放不下，留给"全部"那一页。
-      let script; do { script = { ...scripts[next++ % scripts.length], resets: 'never' }; } while (validate(script).plan.height > 330);
-      said.style.opacity = 0;
-      const sheet = mount(zoom, script, { state: used(script), kept: Math.random() < 0.5 });
-      said.textContent = script.intent ? `「${script.intent}」` : '';
-      said.style.top = `${sheet.plan.height * 0.64 + 8}px`; said.style.bottom = 'auto';
-      said.style.opacity = 1;
-      await wait(sheet.plan.total + 6500 + Math.random() * 2500);
-      while (held) await wait(500);
-      said.style.opacity = 0;
-      sheet.fold();
-      await wait(1900);
-      sheet.destroy();
-      await wait(400);
+    if (!self && quiet > 16000 && spirit.state === 'rest' && !sheet) {
+      // 有人来过，又走开了：它闲着，自己画点什么。
+      const piece = any(Object.values(pieces).filter((p) => p.occasion === 'leisure' && p.id !== 'mend-the-gap'));
+      turn += 1; mark(null);
+      showScript(piece);
+      say('闲着。', `「${piece.name}」　这时候把指针放上来，它会回应。`);
+      spirit.play(piece, 'leisure', { hold: 5000 });
+      last = performance.now() + 20000;
     }
-  };
-  loop();
-});
-
-// ── 一笔 · 同一份数据，每次写出来都不一样 ──
-const one = summon(document.getElementById('one'), { size: 64, idle: false });
-setInterval(() => { if (!document.hidden) { one.set('thinking'); setTimeout(() => one.set('rest'), 300); } }, 3400);
+  }
+}
+life();
 </script>
 </body>
 </html>

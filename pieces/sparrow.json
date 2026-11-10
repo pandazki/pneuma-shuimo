@@ -2,19 +2,23 @@
   "format": 1,
   "id": "sparrow",
   "name": "雀",
-  "idea": "一只麻雀落在圆的上沿：淡墨的身子，浓墨的头，一点眼，尾巴翘着。它歪头看了看，扑两下翅飞出纸外，只剩圆。",
+  "idea": "一只麻雀落在圆的上沿：淡墨湿笔的身子，浓墨的翅和头，尾巴翘着，两只细脚踩在圆上。它仰头看了看，扑两下翅飞出纸外，只剩圆。",
   "occasion": "hover",
   "circle": "keep",
   "strokes": [
-    { "path": [[38, 10], [46, 5], [56, 7]], "width": 11, "press": "press", "ink": 0.42, "wet": 0.75, "dry": 0.1, "pace": 0.5, "liberty": "free" },
-    { "path": [[57, 0], [59.6, 1.2]], "width": 9, "press": "dot", "ink": 0.95, "wet": 0.6, "dry": 0, "pace": 0.4, "pause": 160, "liberty": "still" },
-    { "path": [[63, 0], [69, 2.4]], "width": 2.6, "press": "fade", "ink": 1, "wet": 0.4, "dry": 0.2, "pace": 0.3, "pause": 60, "liberty": "still" },
-    { "path": [[37, 9], [28, 3], [21, -5]], "width": 4, "press": "fade", "ink": 0.85, "wet": 0.35, "dry": 0.6, "pace": 0.35, "pause": 120, "liberty": "quick" },
-    { "path": [[60, -9], [62.4, -8]], "width": 9, "press": "dot", "ink": 0.95, "wet": 0.6, "dry": 0, "pace": 0.4, "pause": 1400, "replaces": 1, "liberty": "still" },
-    { "path": [[92, -22], [104, -34], [118, -36]], "width": 6, "press": "fade", "ink": 0.8, "wet": 0.4, "dry": 0.6, "pace": 0.35, "pause": 1300, "moved": true, "fleeting": 350, "liberty": "sweep" },
-    { "path": [[104, -34], [112, -22], [124, -20]], "width": 5, "press": "fade", "ink": 0.6, "wet": 0.4, "dry": 0.6, "pace": 0.35, "pause": 0, "fleeting": 300, "liberty": "sweep" },
-    { "path": [[142, -56], [152, -66], [164, -66]], "width": 4, "press": "fade", "ink": 0.4, "wet": 0.4, "dry": 0.7, "pace": 0.3, "pause": 500, "fleeting": 300, "liberty": "sweep" },
-    { "path": [[152, -66], [158, -56], [168, -56]], "width": 3.4, "press": "fade", "ink": 0.3, "wet": 0.4, "dry": 0.7, "pace": 0.3, "pause": 0, "fleeting": 280, "liberty": "sweep" }
+    { "path": [[36, 7], [45, 3], [54, 6]], "width": 15, "press": "press", "ink": 0.38, "wet": 0.92, "dry": 0, "pace": 0.5, "liberty": "calm" },
+    { "path": [[37, 4], [46, 0.5], [54, 5]], "width": 6, "press": "taper", "ink": 0.82, "wet": 0.4, "dry": 0.45, "tint": 0.4, "pace": 0.4, "pause": 60, "liberty": "free" },
+    { "path": [[56, -2.8], [58.4, -1.8]], "width": 11.5, "press": "dot", "ink": 0.96, "wet": 0.55, "dry": 0, "pace": 0.4, "pause": 120, "liberty": "still" },
+    { "path": [[61.4, -3.2], [68.6, -1]], "width": 3.2, "press": "fade", "ink": 1, "wet": 0.4, "dry": 0.2, "pace": 0.3, "pause": 0, "liberty": "still" },
+    { "path": [[36, 6], [27, 0], [19, -9]], "width": 4.8, "press": "fade", "ink": 0.86, "wet": 0.35, "dry": 0.6, "pace": 0.35, "pause": 100, "liberty": "quick" },
+    { "path": [[45.6, 12], [45, 18]], "width": 1.7, "press": "hair", "ink": 0.85, "wet": 0.4, "dry": 0.2, "pace": 0.3, "pause": 80, "liberty": "still" },
+    { "path": [[51, 12], [51.6, 18]], "width": 1.7, "press": "hair", "ink": 0.85, "wet": 0.4, "dry": 0.2, "pace": 0.3, "pause": 0, "liberty": "still" },
+    { "path": [[54.2, -6.8], [56.6, -6.4]], "width": 11.5, "press": "dot", "ink": 0.96, "wet": 0.55, "dry": 0, "pace": 0.4, "pause": 1500, "replaces": [2, 3], "liberty": "still" },
+    { "path": [[58.8, -10.4], [64, -16]], "width": 3.2, "press": "fade", "ink": 1, "wet": 0.4, "dry": 0.2, "pace": 0.3, "pause": 0, "liberty": "still" },
+    { "path": [[92, -22], [104, -35], [119, -37]], "width": 6.5, "press": "fade", "ink": 0.82, "wet": 0.4, "dry": 0.6, "pace": 0.35, "pause": 1300, "moved": true, "fleeting": 350, "liberty": "sweep" },
+    { "path": [[104, -35], [112, -22], [125, -20]], "width": 5.4, "press": "fade", "ink": 0.6, "wet": 0.4, "dry": 0.6, "pace": 0.35, "pause": 0, "fleeting": 300, "liberty": "sweep" },
+    { "path": [[142, -56], [152, -67], [165, -67]], "width": 4.2, "press": "fade", "ink": 0.4, "wet": 0.4, "dry": 0.7, "pace": 0.3, "pause": 500, "fleeting": 300, "liberty": "sweep" },
+    { "path": [[152, -67], [158, -56], [169, -56]], "width": 3.6, "press": "fade", "ink": 0.3, "wet": 0.4, "dry": 0.7, "pace": 0.3, "pause": 0, "fleeting": 280, "liberty": "sweep" }
   ],
-  "hold": 300
+  "hold": 250
 }

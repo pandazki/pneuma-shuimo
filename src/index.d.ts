@@ -51,6 +51,8 @@ export interface MountOptions {
   kept?: boolean;
   /** 一开始就展开（默认 true）。false 时只有圆，等主人点。 */
   autoplay?: boolean;
+  /** false：这张纸从别人的圆里长出来（助理的头像放在圆的位置上），自己不画圆。 */
+  circle?: boolean;
   /** 一次写完，不走时间（减弱动效时自动如此）。 */
   instant?: boolean;
   /** 定格在展开后的第几毫秒，用于检查。 */
@@ -132,6 +134,9 @@ export interface Spirit {
   /** 像有指针在那边一样看过去（相对圆心的像素）；unlook 让点干去。 */
   look(dx: number, dy: number): void;
   unlook(): void;
+  /** 圆在原处干去（它要走了）；rewrite 在它现在的地方重新写出来。 */
+  dryAway(dur?: number): void;
+  rewrite(dur?: number): void;
   play(piece: Piece, occasion?: 'leisure' | 'hover', over?: { hold?: number }): boolean;
   giveWay(): void;
   destroy(): void;

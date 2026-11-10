@@ -5,6 +5,9 @@ import { BANDS, Painter } from './brush.js';
  * its own opacity as it dries. Nothing on the paper ever moves, turns or scales: ink is written, and ink dries.
  */
 
+/** Extra pixels per CSS pixel, for a paper shown enlarged (a stage scaled up by CSS): set before papers are made. */
+export const DENSITY = { boost: 1 };
+
 const surface = (w, h) => {
   if (typeof OffscreenCanvas !== 'undefined') return new OffscreenCanvas(w, h);
   const c = document.createElement('canvas');
@@ -24,7 +27,7 @@ export class Paper {
 
   /** Size in CSS pixels. Everything written so far is laid again at the new size. */
   resize(width, height) {
-    const ratio = Math.max(1, Math.min(8, globalThis.devicePixelRatio || 1));
+    const ratio = Math.max(1, Math.min(8, (globalThis.devicePixelRatio || 1) * DENSITY.boost));
     if (width === this.width && height === this.height && ratio === this.ratio) return;
     this.width = width; this.height = height; this.ratio = ratio;
     this.canvas.width = Math.round(width * ratio);

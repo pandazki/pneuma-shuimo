@@ -291,6 +291,9 @@ export function summon(container, options = {}) {
     set,
     play: (piece, occasion, over) => play(piece, occasion, now(), over),
     look, unlook: () => dryEye(), done,
+    /** Its circle dries where it is (it is leaving, or being carried off); rewrite() writes it again where it now is. */
+    dryAway(dur = 500) { giveWay(); dryEye(); dry(circle, now(), dur); wake(); },
+    rewrite(dur = 620) { rewriteCircle(now(), dur); },
     giveWay: () => giveWay(),
     destroy() { for (const id of timers) clearTimeout(id); if (frame) cancelAnimationFrame(frame); paper.clear(); root.remove(); },
   };

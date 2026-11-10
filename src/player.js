@@ -107,9 +107,13 @@ export function mount(container, script, options = {}) {
   const appear = (el, delay) => { el.classList.add('shuimo-fade'); later(delay, () => el.classList.add('is-written')); };
 
   // ── the circle: always there. Folding ends on it; it is written again each time, never the same twice ──
-  let circle = paper.add(lay(CIRCLE, seed()), INK);
-  circle.written = 1;
+  // `circle: false`: the sheet grows from a circle that is someone else's (the assistant's own avatar, placed where
+  // the sheet's circle would be), so it neither writes one nor listens for presses on it.
+  const own = options.circle !== false;
+  let circle = own ? paper.add(lay(CIRCLE, seed()), INK) : null;
+  if (circle) circle.written = 1;
   const rewriteCircle = () => {
+    if (!own) return;
     const old = circle;
     run(0, 300, (u) => { old.opacity = 1 - 0.75 * u; });
     circle = writeStroke(CIRCLE, 120, 620);
@@ -118,7 +122,7 @@ export function mount(container, script, options = {}) {
   const circleButton = document.createElement('button');
   circleButton.className = 'shuimo-circle';
   circleButton.type = 'button';
-  root.append(circleButton);
+  if (own) root.append(circleButton);
 
   // ── the sheet: everything below is built on unfold and removed on fold ──
   let open = false;
