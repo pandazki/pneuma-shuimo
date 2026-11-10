@@ -51,8 +51,8 @@
   <canvas id="trail"></canvas>
   <h1 class="at" id="logo" style="left:44px;top:26px">墨</h1>
   <div class="at faint" id="sub" style="left:74px;top:39px">pneuma-shuimo</div>
-  <div class="at faint" style="right:40px;top:36px"><a href="board.html">全部案例</a>　<span class="link" id="showJson">看它写的脚本</span></div>
-  <div class="at faint" style="right:40px;bottom:26px" id="legend">朱点：这一句的脚本是模型只凭 skill 写的</div>
+  <div class="at faint" style="right:40px;top:36px"><a href="board.html">诸作</a>　<span class="link" id="showJson">观其稿</span></div>
+  <div class="at faint" style="right:40px;bottom:26px" id="legend">朱点者，其稿为模型据 skill 自撰</div>
 
   <div id="sheet"></div>
   <div id="me"></div>
@@ -86,12 +86,12 @@ for (const path of await json('/scripts.json')) { const s = await json(path); if
 const hoverPieces = Object.values(pieces).filter((p) => p.occasion === 'hover' && p.id !== 'roll-about');
 
 const WORDS = [
-  { head: '对它说一句' },
+  { head: '与之言' },
   { say: '帮我记每天喝了几杯水', grow: 'water' },
   { say: '每天早上，我要做三件事', grow: 'morning' },
   { say: '明天有雨，别让我忘了带伞', grow: 'umbrella' },
   { say: '这周想去三次健身房', grow: 'gym', model: true },
-  { head: '或者，让它自己玩' },
+  { head: '任其自娱' },
   { say: '闲着的时候，钓会儿鱼吧', play: 'fishing', model: true },
   { say: '我最近迷上喝茶了', play: 'tea-leaf', model: true },
   { say: '困了就睡一会儿', play: 'sleeping-cat' },
@@ -168,7 +168,7 @@ const wordsEl = document.getElementById('words');
 const legend = document.getElementById('legend');
 legend.style.transition = 'opacity 600ms';
 const jsonEl = document.getElementById('json');
-const showScript = (obj) => { jsonEl.textContent = obj ? JSON.stringify(obj, null, 1).replace(/\[\s+(-?[\d.]+),\s+(-?[\d.]+)\s+\]/g, '[$1, $2]') : '它还没写什么。'; };
+const showScript = (obj) => { jsonEl.textContent = obj ? JSON.stringify(obj, null, 1).replace(/\[\s+(-?[\d.]+),\s+(-?[\d.]+)\s+\]/g, '[$1, $2]') : '尚未落笔。'; };
 showScript(null);
 document.getElementById('showJson').onclick = () => jsonEl.classList.toggle('on');
 for (const w of WORDS) {
@@ -202,7 +202,7 @@ async function merge() {
   const seal = spirit.ink({ path: rim, width: 10, press: 'plain', ink: 0.95, wet: 0.5, dry: 0.35, liberty: 'calm' }, { after: 520, dur: 460 });   // 最后一笔，把口合上
   merged = { seal };
   await wait(1100);
-  if (my === turn) say('我就是墨。', '按住这个圈，可以再把我带出来。');
+  if (my === turn) say('我即是墨。', '按此圆，可复携我而出。');
 }
 function unmerge() {
   if (!merged) return;
@@ -225,7 +225,7 @@ async function fold(quiet = false) {
   wordsEl.classList.remove('away'); legend.style.opacity = 1;
   spirit.rewrite(600);
   mark(null);
-  if (!quiet) say('从圆里来，回圆里去。');
+  if (!quiet) say('自圆而生，复归于圆。');
   await wait(900);
   s.destroy();
 }
@@ -245,33 +245,33 @@ async function hear(w) {
   if (w.blank) {
     await travel(HOME); if (!alive()) return;
     spirit.set('blank'); showScript(null);
-    await say('放空。', '墨淡到只剩一道痕；过一阵，我再把自己写回来。');
+    await say('坐忘。', '墨淡而痕存；少顷，复自书之。');
     return;
   }
   if (w.play) {
     const piece = pieces[w.play];
     await travel(HOME); if (!alive()) return;
-    spirit.set('thinking'); await say('我想想。'); await wait(1900); if (!alive()) return;
+    spirit.set('thinking'); await say('容我思之。'); await wait(1900); if (!alive()) return;
     spirit.set('rest'); await wait(700); if (!alive()) return;
     showScript(piece);
-    say(`「${piece.name}」`, piece.answer ? '它在的时候，把指针放到我身上试试。' : '这一段是一份 JSON：几笔，什么时候写，什么时候干。');
+    say(`「${piece.name}」`, piece.answer ? '画未干时，移指触我，试之。' : '此一段不过数笔：何时落，何时干。');
     spirit.play(piece, 'leisure', { hold: piece.occasion === 'leisure' ? 5000 : 900 });
     while (alive() && spirit.busy) await wait(300);
-    if (alive()) { mark(null); say('演完了。', '想再看，再点一次。'); }
+    if (alive()) { mark(null); say('戏毕。', '欲再观，复点之。'); }
     return;
   }
   const script = { ...scripts[w.grow], resets: 'never' };
   await travel(DESK); if (!alive()) return;
-  spirit.set('thinking'); await say('我想想。'); await wait(2100); if (!alive()) return;
-  spirit.set('working'); await say('在写。'); await wait(2300); if (!alive()) return;
+  spirit.set('thinking'); await say('容我思之。'); await wait(2100); if (!alive()) return;
+  spirit.set('working'); await say('落笔。'); await wait(2300); if (!alive()) return;
   spirit.done(); await wait(1900); if (!alive()) return;
   showScript(script);
   const el = document.getElementById('sheet');
   el.style.left = `${pos.x + SIZE / 2 - 30}px`; el.style.top = `${pos.y + SIZE / 2 - 34}px`;
   wordsEl.classList.add('away'); legend.style.opacity = 0;
-  sheet = mount(el, script, { circle: false, onState: () => { if (!done.use) { done.use = true; say('它是真的。', '用完了，点一下我，它就收回去。'); } }, onKeep: (k) => say(k ? '钤了印，它就留下了。' : '印取掉了。') });
+  sheet = mount(el, script, { circle: false, onState: () => { if (!done.use) { done.use = true; say('可用之物也。', '用毕，点我，则收之入圆。'); } }, onKeep: (k) => say(k ? '钤印，则留。' : '去印，则不留。') });
   await wait(sheet.plan.usable + 300); if (!alive()) return;
-  say('写出来了。', done.use ? '点一下我，它就收回去。' : '它是真的：点一点试试。');
+  say('成矣。', done.use ? '点我，则收之入圆。' : '非画饼也，可点可用，试之。');
 }
 
 // ── 拖：带着走只是位置跟手，形不变；放到一句话上，就是对它说了这句话 ──
@@ -290,7 +290,7 @@ me.addEventListener('pointermove', (e) => {
     held.moved = true; me.classList.add('held');
     const was = merged;
     turn += 1; unmerge(); spirit.set('rest'); fold(true);
-    if (was) say('出来了。'); else if (!done.carry) say('带我去哪？', '放到右边的一句话上；或者随便放个地方。');
+    if (was) say('出矣。'); else if (!done.carry) say('将安之？', '置我于右侧一语之上；或随意安放。');
     follow();
   }
   held.tx = Math.max(4, Math.min(W - SIZE - 4, p.x - held.dx)); held.ty = Math.max(4, Math.min(H - SIZE - 4, p.y - held.dy));
@@ -310,7 +310,7 @@ me.addEventListener('pointerup', async () => {
   if (nearLogo(pos.x, pos.y)) { merge(); return; }
   const w = wordAt(pos.x + SIZE / 2, pos.y + SIZE / 2);
   if (w) { hear(w); return; }
-  say('好，我就待在这儿。', '左上角那个「墨」字，也可以把我放上去。');
+  say('此间甚好。', '左上有「墨」字，亦可置我其上。');
 });
 
 // ── 它看得见指针：指针在附近，它点一个睛看过去 ──
@@ -326,7 +326,7 @@ stage.addEventListener('pointermove', (e) => {
   const turned = Math.abs(Math.atan2(Math.sin(angle - eye.angle), Math.cos(angle - eye.angle)));
   if (!eye.on || (turned > 0.75 && now - eye.at > 650)) { spirit.look(dx, dy); eye = { on: true, angle, at: now }; }
 });
-me.addEventListener('pointerenter', () => { touched(); if (!done.hover && spirit.state === 'rest' && !sheet) { done.hover = true; say('我看见你了。', '停一下别动，我给你演一小段。'); } });
+me.addEventListener('pointerenter', () => { touched(); if (!done.hover && spirit.state === 'rest' && !sheet) { done.hover = true; say('见君矣。', '少驻勿动，为君戏作一段。'); } });
 
 // ── 没人理它的时候：它过自己的日子，也顺便把自己介绍一遍 ──
 let last = performance.now();
@@ -337,10 +337,10 @@ const demoWords = WORDS.filter((w) => w.grow || w.play);
 let demoAt = 0;
 async function life() {
   await wait(900);
-  await say('我是墨。', '一张纸，一个圆。圆就是我。');
+  await say('吾名墨。', '一纸，一圆。圆即是我。');
   await wait(2600);
   wordsEl.classList.add('on');
-  await say('我是活的。', '把指针移过来；按住我，可以带着我走。');
+  await say('非画也，活物也。', '移指相近，我自顾之；按而携之，随君所往。');
   for (;;) {
     await wait(1000);
     const quiet = performance.now() - last;
@@ -348,7 +348,7 @@ async function life() {
     if (self && quiet > 6500 && spirit.state === 'rest' && !sheet) {
       // 没人来：它自己挑一句话做给你看，做完收回去。
       const w = demoWords[demoAt++ % demoWords.length];
-      await say('没人说话，我自己来。'); await wait(900);
+      await say('无人言语，我自为之。'); await wait(900);
       const my = turn + 1;
       await hear(w);
       if (turn !== my) continue;
@@ -365,7 +365,7 @@ async function life() {
       const piece = any(Object.values(pieces).filter((p) => p.occasion === 'leisure' && p.id !== 'mend-the-gap'));
       turn += 1; mark(null);
       showScript(piece);
-      say('闲着。', `「${piece.name}」　这时候把指针放上来，它会回应。`);
+      say('闲来无事，聊作一画。', `「${piece.name}」　此时移指触之，自有回应。`);
       spirit.play(piece, 'leisure', { hold: 5000 });
       last = performance.now() + 20000;
     }
