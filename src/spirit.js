@@ -6,8 +6,8 @@ import { AVATAR, avatarCircle, composePiece, validatePiece } from './piece.js';
  * 灵。The assistant's avatar: one circle written with a brush, alive.
  *
  *   - At rest it is the circle, and no clock runs. Every writing of the circle differs a little.
- *   - The owner's pointer comes over it: it dots an eye on the side the pointer came from (点睛). The pointer stays a
- *     moment: it plays a short piece. The pointer leaves: the eye dries.
+ *   - The owner's pointer comes over it: a pale wash spreads inside it on the side the pointer is (its attention
+ *     leaning that way). The pointer stays a moment: it plays a short piece. The pointer leaves: the wash fades.
  *   - Nothing has happened for a while: it writes a piece at leisure, slowly, then folds it back into the circle.
  *     If the pointer finds it mid-piece, the piece answers (the cat opens an eye) and gives way.
  *   - It is thinking: the circle is written again and again over its own trace, each time a little different.
@@ -69,7 +69,9 @@ export function summon(container, options = {}) {
       const u = ink.dur <= 0 ? (now >= ink.t0 ? 1 : 0) : (now - ink.t0) / ink.dur;
       ink.mark.written = Math.max(ink.mark.written, ease(u));
       const gone = ink.dryAt === null ? 0 : clamp((now - ink.dryAt) / ink.dryDur);
-      ink.mark.opacity = 1 - (1 - ink.floor) * gone;
+      const risen = ink.rise ? clamp((now - ink.t0) / ink.rise) : 1;   // a wash does not land, it spreads
+      ink.mark.opacity = (1 - (1 - ink.floor) * gone) * risen;
+      if (risen < 1) moving = true;
       if (ink.dryAt !== null && gone >= 1 && ink.floor === 0) { paper.remove(ink.mark); inks.delete(ink); continue; }
       if (u < 1 || (ink.dryAt !== null && gone < 1)) moving = true;
     }
@@ -147,19 +149,21 @@ export function summon(container, options = {}) {
     wake();
   }
 
-  // ── the eye: it looks at the owner ──
+  // ── attention: it turns toward the owner ──
+  // No eye, no face. Inside the circle, on the side the pointer is, a pale wash of ink spreads (晕): its attention
+  // leaning that way. The pointer goes round: the old wash fades as a new one spreads on the new side. It never slides.
   let eye = null;
   const writeEye = (dx, dy) => {
     const d = Math.hypot(dx, dy) || 1;
-    const reach = Math.min(1, d / (size * 0.3)) * 13;
-    const [cx, cy] = [50 + (dx / d) * reach, 50 + (dy / d) * reach];
-    dryEye();
-    eye = put({ path: [[cx - 1.6, cy - 1], [cx + 1.6, cy + 1]], width: 9, press: 'dot', ink: 1, wet: 0.6, dry: 0, liberty: 'still' }, now(), reduced ? 0 : 200, 'eye');
+    const lean = Math.min(1, d / (size * 0.3)) * 8.5;
+    const [cx, cy] = [50 + (dx / d) * lean, 50 + (dy / d) * lean];
+    dryEye(now(), 520);
+    eye = put({ path: [[cx - 1.5, cy - 1], [cx + 1.5, cy + 1]], width: 39, press: 'dot', ink: 0.26, wet: 1, dry: 0, liberty: 'still' }, now(), 0, 'eye');
+    eye.rise = reduced ? 0 : 420;
     eye.angle = Math.atan2(dy, dx);
     wake();
   };
-  const dryEye = (at = now()) => { if (eye) { dry(eye, at, 320); eye = null; wake(); } };
-
+  const dryEye = (at = now(), over = 420) => { if (eye) { dry(eye, at, over); eye = null; wake(); } };
   /** It looks that way (dx, dy from its middle, in px), as if a pointer were there; unlook() lets the eye dry. */
   const look = (dx, dy) => { if (!act && state === 'rest') writeEye(dx, dy); };
 
@@ -259,7 +263,7 @@ export function summon(container, options = {}) {
     if (!hovering || act || state !== 'rest' || !eye) return;
     const [dx, dy] = offset(event);
     const turn = Math.abs(Math.atan2(Math.sin(Math.atan2(dy, dx) - eye.angle), Math.cos(Math.atan2(dy, dx) - eye.angle)));
-    if (turn > 0.7 && performance.now() - eye.t0 > 600) writeEye(dx, dy); // the dot never slides: it dries, and is dotted anew
+    if (turn > 0.5 && performance.now() - eye.t0 > 380) writeEye(dx, dy);
   };
   const onLeave = () => { hovering = false; clearTimeout(dwell); dryEye(); schedule(); };
   const onDown = () => { clearTimeout(dwell); giveWay(now(), 180); dryEye(); rewriteCircle(); schedule(); options.onPress?.(); };

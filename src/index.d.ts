@@ -131,7 +131,7 @@ export interface Spirit {
   set(state: 'rest' | 'thinking' | 'working' | 'blank' | 'still'): void;
   /** 事情做完了：一笔合上口，停一拍干去，回到静。 */
   done(): void;
-  /** 像有指针在那边一样看过去（相对圆心的像素）；unlook 让点干去。 */
+  /** 像有指针在那边一样把注意偏过去（圆里那一侧晕开）（相对圆心的像素）；unlook 让晕散去。 */
   look(dx: number, dy: number): void;
   unlook(): void;
   /** 圆在原处干去（它要走了）；rewrite 在它现在的地方重新写出来。 */

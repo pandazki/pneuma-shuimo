@@ -313,7 +313,7 @@ me.addEventListener('pointerup', async () => {
   say('此间甚好。', '左上有「墨」字，亦可置我其上。');
 });
 
-// ── 它看得见指针：指针在附近，它点一个睛看过去 ──
+// ── 它觉得到指针：指针在附近，圆里朝着那一侧晕开一层淡墨 ──
 let eye = { on: false, angle: 0, at: 0 };
 stage.addEventListener('pointermove', (e) => {
   if (held || merged || spirit.busy || spirit.state !== 'rest') return;
@@ -324,7 +324,7 @@ stage.addEventListener('pointermove', (e) => {
   if (far > 150) { if (eye.on) { spirit.unlook(); eye.on = false; } return; }
   const angle = Math.atan2(dy, dx);
   const turned = Math.abs(Math.atan2(Math.sin(angle - eye.angle), Math.cos(angle - eye.angle)));
-  if (!eye.on || (turned > 0.75 && now - eye.at > 650)) { spirit.look(dx, dy); eye = { on: true, angle, at: now }; }
+  if (!eye.on || (turned > 0.5 && now - eye.at > 400)) { spirit.look(dx, dy); eye = { on: true, angle, at: now }; }
 });
 me.addEventListener('pointerenter', () => { touched(); if (!done.hover && spirit.state === 'rest' && !sheet) { done.hover = true; say('见君矣。', '少驻勿动，为君戏作一段。'); } });
 

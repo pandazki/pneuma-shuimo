@@ -124,7 +124,7 @@ const leisure = pieces.filter((p) => p.occasion === 'leisure');
 const STATES = [
   { id: 'rest', word: '静', note: '无事', say: '无事，一笔静止的圆。', more: '没有时钟在跑；它每次被写出来都不一样。',
     async run() { hero.set('rest'); await wait(3600); } },
-  { id: 'look', word: '看', note: '指针来了', say: '指针来了：点一个睛，看向你。', more: '指针绕着走，旧的点干去，新的点落在那一侧；停一下，它演一小段。',
+  { id: 'look', word: '看', note: '指针来了', say: '指针来了：圆里朝着你的那一侧，晕开一层淡墨。', more: '指针绕着走，旧的晕淡去，新的晕在那一侧化开；停一下，它演一小段。',
     async run(alive) {
       hero.set('rest');
       await point(170, 120, false); await point(64, 40);
@@ -183,7 +183,7 @@ hero.el.addEventListener('pointerenter', () => {
   say.innerHTML = `它是你的了。<small>停一下看它演；按下去，一切干回圆。移开两秒，它接着过自己的日子。</small>`;
 });
 hero.el.addEventListener('pointerleave', () => { back = setTimeout(() => { mine = false; go(2); }, 2000); });
-// 真指针下它自己会点睛、演小品（summon 自带）；这里只给它小品。
+// 真指针下它自己会把注意偏过去、演小品（summon 自带）；这里只给它小品。
 go(0);
 
 // ── 灵 · 每一幅小品一个小头像，各自一遍遍地演；指针放上去它们会回应 ──

@@ -75,7 +75,7 @@ export class Paper {
       layer.painter.paint(layer.ctxs, mark.written);
       if (mark.opacity <= 0.003) continue;
       // A wet stroke bleeds into the paper: its edge is soft, never ruled.
-      const bleed = Math.max(0, mark.laid.wet - 0.65) * Math.min(mark.laid.width, 9) * 0.34 * this.ratio;
+      const bleed = Math.max(0, mark.laid.wet - 0.65) * Math.min(mark.laid.width, 26) * 0.34 * this.ratio;
       ctx.filter = bleed > 0.05 ? `blur(${bleed.toFixed(2)}px)` : 'none';
       layer.canvases.forEach((c, band) => {
         ctx.globalAlpha = Math.min(1, mark.opacity * mark.laid.ink * BANDS[band]);
